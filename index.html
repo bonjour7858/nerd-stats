@@ -2,22 +2,81 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>YouTube Nerd Stats</title>
   <style>
-    body { font-family: monospace; background: #121212; color: #00ff66; padding: 20px; }
-    input, button { padding: 10px; background: #222; color: #fff; border: 1px solid #00ff66; }
-    .stat-card { border: 1px solid #333; padding: 15px; margin-top: 15px; background: #1a1a1a; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #0d1117;
+      color: #58a6ff;
+      font-family: 'Courier New', Courier, monospace;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    h1 { margin-bottom: 20px; color: #3fb950; text-shadow: 0 0 10px rgba(63, 185, 80, 0.4); }
+    .search-box {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 30px;
+    }
+    input {
+      flex: 1;
+      padding: 12px;
+      background: #161b22;
+      border: 1px solid #30363d;
+      color: #f0f6fc;
+      border-radius: 6px;
+      font-family: inherit;
+    }
+    input:focus { outline: none; border-color: #58a6ff; }
+    button {
+      padding: 12px 20px;
+      background: #238636;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-family: inherit;
+    }
+    button:hover { background: #2ea043; }
+    .error-msg { color: #f85149; background: rgba(248, 81, 73, 0.1); border: 1px solid #f85149; padding: 15px; border-radius: 6px; max-width: 600px; width: 100%; display: none; margin-bottom: 20px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      width: 100%;
+      max-width: 800px;
+    }
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      padding: 15px;
+      border-radius: 6px;
+    }
+    .card-title { font-size: 0.8em; color: #8b949e; margin-bottom: 5px; text-transform: uppercase; }
+    .card-value { font-size: 1.4em; font-weight: bold; color: #f0f6fc; }
   </style>
 </head>
 <body>
-  <h1>[ Nerd Stats YouTube ]</h1>
-  <input type="text" id="urlInput" placeholder="Colle le lien YouTube ici...">
-  <button onclick="fetchNerdStats()">Analyser</button>
 
-  <div id="results"></div>
+  <h1>&gt;_ YOUTUBE_NERD_STATS</h1>
+
+  <div class="search-box">
+    <input type="text" id="urlInput" placeholder="Colle le lien de la vidéo YouTube...">
+    <button id="btnAnalyze">ANALYZER</button>
+  </div>
+
+  <div id="error" class="error-msg"></div>
+  <div id="results" class="grid"></div>
 
   <script>
-    const API_KEY = 'AIzaSyAx6nTNIfhwccw2JSJQ_JyYhrBTNn5p7LQ'; // À remplacer par ta clé API Google
+    const API_KEY = 'AIzaSyAx6nTNIfhwccw2JSJQ_JyYhrBTNn5p7LQ';
 
     function extractVideoId(url) {
       const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -26,39 +85,76 @@
     }
 
     async function fetchNerdStats() {
-      const url = document.getElementById('urlInput').value;
+      const errorDiv = document.getElementById('error');
+      const resultsDiv = document.getElementById('results');
+      errorDiv.style.display = 'none';
+      resultsDiv.innerHTML = '';
+
+      const url = document.getElementById('urlInput').value.trim();
       const videoId = extractVideoId(url);
-      if (!videoId) return alert('URL invalide');
 
-      // 1. Fetch YouTube API Data
-      const ytResponse = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoId}&key=${API_KEY}`);
-      const ytData = await ytResponse.json();
-      const video = ytData.items[0];
+      if (!videoId) {
+        errorDiv.textContent = '❌ URL YouTube invalide.';
+        errorDiv.style.display = 'block';
+        return;
+      }
 
-      // 2. Fetch Dislikes (Return YouTube Dislike API)
-      const dislikeResponse = await fetch(`https://returnyoutubedislikeapi.com/votes?videoId=${videoId}`);
-      const dislikeData = await dislikeResponse.json();
+      try {
+        // 1. YouTube Data API
+        const ytRes = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoId}&key=${API_KEY}`);
+        
+        if (!ytRes.ok) {
+          const errData = await ytRes.json();
+          throw new Error(`Erreur API Google (${ytRes.status}) : ${errData.error?.message || 'Inconnue'}`);
+        }
 
-      // 3. Calculs
-      const views = parseInt(video.statistics.viewCount);
-      const likes = parseInt(video.statistics.likeCount || 0);
-      const dislikes = dislikeData.dislikes;
-      const comments = parseInt(video.statistics.commentCount || 0);
-      const engagementRate = (((likes + comments) / views) * 100).toFixed(2);
-      const likeDislikeRatio = ((likes / (likes + dislikes)) * 100).toFixed(1);
+        const ytData = await ytRes.json();
+        if (!ytData.items || ytData.items.length === 0) {
+          throw new Error('Vidéo introuvable ou privée.');
+        }
 
-      // 4. Affichage
-      document.getElementById('results').innerHTML = `
-        <div class="stat-card">
-          <h3>${video.snippet.title}</h3>
-          <p>👀 Vues : ${views.toLocaleString()}</p>
-          <p>👍 Likes : ${likes.toLocaleString()} | 👎 Dislikes (estimés) : ${dislikes.toLocaleString()}</p>
-          <p>📊 Ratio Likes/Dislikes : ${likeDislikeRatio}%</p>
-          <p>⚡ Taux d'engagement global : ${engagementRate}%</p>
-          <p>💬 Densité de commentaires : ${(comments / views * 1000).toFixed(2)} comms / 1k vues</p>
-        </div>
-      `;
+        const video = ytData.items[0];
+
+        // 2. Return YouTube Dislike API
+        let dislikes = 'N/A';
+        try {
+          const disRes = await fetch(`https://returnyoutubedislikeapi.com/votes?videoId=${videoId}`);
+          if (disRes.ok) {
+            const disData = await disRes.json();
+            dislikes = disData.dislikes;
+          }
+        } catch (e) { console.warn('Impossible de charger les dislikes'); }
+
+        // Calculations
+        const views = parseInt(video.statistics.viewCount || 0);
+        const likes = parseInt(video.statistics.likeCount || 0);
+        const comments = parseInt(video.statistics.commentCount || 0);
+        const engagementRate = views > 0 ? (((likes + comments) / views) * 100).toFixed(2) : 0;
+
+        // Render UI
+        resultsDiv.innerHTML = `
+          <div class="card" style="grid-column: 1 / -1;">
+            <div class="card-title">Titre de la vidéo</div>
+            <div class="card-value" style="font-size: 1.1em; color: #3fb950;">${video.snippet.title}</div>
+          </div>
+          <div class="card"><div class="card-title">Vues</div><div class="card-value">${views.toLocaleString()}</div></div>
+          <div class="card"><div class="card-title">Likes</div><div class="card-value">👍 ${likes.toLocaleString()}</div></div>
+          <div class="card"><div class="card-title">Dislikes (estimés)</div><div class="card-value">👎 ${typeof dislikes === 'number' ? dislikes.toLocaleString() : dislikes}</div></div>
+          <div class="card"><div class="card-title">Commentaires</div><div class="card-value">💬 ${comments.toLocaleString()}</div></div>
+          <div class="card"><div class="card-title">Taux d'engagement</div><div class="card-value">⚡ ${engagementRate}%</div></div>
+        `;
+
+      } catch (err) {
+        errorDiv.textContent = `❌ ${err.message}`;
+        errorDiv.style.display = 'block';
+      }
     }
+
+    // Attach click and enter events
+    document.getElementById('btnAnalyze').addEventListener('click', fetchNerdStats);
+    document.getElementById('urlInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') fetchNerdStats();
+    });
   </script>
 </body>
 </html>
