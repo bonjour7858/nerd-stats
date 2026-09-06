@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>YouTube Nerd Stats</title>
+  <style>
+    body { font-family: monospace; background: #121212; color: #00ff66; padding: 20px; }
+    input, button { padding: 10px; background: #222; color: #fff; border: 1px solid #00ff66; }
+    .stat-card { border: 1px solid #333; padding: 15px; margin-top: 15px; background: #1a1a1a; }
+  </style>
+</head>
+<body>
+  <h1>[ Nerd Stats YouTube ]</h1>
+  <input type="text" id="urlInput" placeholder="Colle le lien YouTube ici...">
+  <button onclick="fetchNerdStats()">Analyser</button>
+
+  <div id="results"></div>
+
+  <script>
+    const API_KEY = 'AIzaSyAx6nTNIfhwccw2JSJQ_JyYhrBTNn5p7LQ'; // À remplacer par ta clé API Google
+
+    function extractVideoId(url) {
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[2].length === 11) ? match[2] : null;
+    }
+
+    async function fetchNerdStats() {
+      const url = document.getElementById('urlInput').value;
+      const videoId = extractVideoId(url);
+      if (!videoId) return alert('URL invalide');
+
+      // 1. Fetch YouTube API Data
+      const ytResponse = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoId}&key=${API_KEY}`);
+      const ytData = await ytResponse.json();
+      const video = ytData.items[0];
+
+      // 2. Fetch Dislikes (Return YouTube Dislike API)
+      const dislikeResponse = await fetch(`https://returnyoutubedislikeapi.com/votes?videoId=${videoId}`);
+      const dislikeData = await dislikeResponse.json();
+
+      // 3. Calculs
+      const views = parseInt(video.statistics.viewCount);
+      const likes = parseInt(video.statistics.likeCount || 0);
+      const dislikes = dislikeData.dislikes;
+      const comments = parseInt(video.statistics.commentCount || 0);
+      const engagementRate = (((likes + comments) / views) * 100).toFixed(2);
+      const likeDislikeRatio = ((likes / (likes + dislikes)) * 100).toFixed(1);
+
+      // 4. Affichage
+      document.getElementById('results').innerHTML = `
+        <div class="stat-card">
+          <h3>${video.snippet.title}</h3>
+          <p>👀 Vues : ${views.toLocaleString()}</p>
+          <p>👍 Likes : ${likes.toLocaleString()} | 👎 Dislikes (estimés) : ${dislikes.toLocaleString()}</p>
+          <p>📊 Ratio Likes/Dislikes : ${likeDislikeRatio}%</p>
+          <p>⚡ Taux d'engagement global : ${engagementRate}%</p>
+          <p>💬 Densité de commentaires : ${(comments / views * 1000).toFixed(2)} comms / 1k vues</p>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
