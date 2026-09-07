@@ -3,121 +3,96 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NerdStats — Advanced YouTube Analytics</title>
+  <title>NerdStats — Explorez les données YouTube</title>
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
+  <div class="stars-bg"></div>
+
   <header class="navbar">
     <div class="nav-container">
-      <div class="brand">
-        <span class="brand-icon">📊</span>
-        <span class="brand-name">NerdStats</span>
-        <span class="version-tag">v2.0</span>
-      </div>
-      <div class="status-indicator" id="statusBadge">
-        <span class="dot"></span>
-        <span class="status-text">Prêt</span>
-      </div>
+      <div class="logo">Cosmic<span>Stats</span></div>
+      <nav class="nav-links">
+        <a href="#">Accueil</a>
+        <a href="#">Fonctionnalités</a>
+        <a href="#">Metrics</a>
+        <a href="#" class="active">API</a>
+      </nav>
+      <div class="status-badge" id="statusBadge">Prêt</div>
     </div>
   </header>
 
   <main class="container">
-    <section class="hero-section">
-      <h1>Analyse métrique avancée YouTube</h1>
-      <p class="subtitle">Obtenez des métriques d'engagement, des données d'audience et des estimations financières en un instant.</p>
-      
+    <section class="hero">
+      <h1>Explorez les confins de la donnée YouTube</h1>
+      <p class="subtitle">Analysez n'importe quelle vidéo, découvrez les statistiques cachées et révélez le potentiel de vos contenus.</p>
+
       <div class="search-box">
-        <div class="input-wrapper">
-          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-          <input type="text" id="urlInput" placeholder="Collez le lien de la vidéo YouTube (Watch, Shorts, etc.)">
-        </div>
+        <input type="text" id="urlInput" placeholder="Collez le lien de la vidéo YouTube...">
         <button id="analyzeBtn">Lancer l'analyse</button>
       </div>
 
       <div id="errorBox" class="error-banner"></div>
     </section>
 
-    <section id="resultsSection" class="dashboard-grid hidden">
+    <section id="resultsSection" class="dashboard hidden">
       
-      <div class="card full-width video-summary-card">
-        <img id="thumbImg" src="" alt="Thumbnail Video" class="video-thumbnail">
-        <div class="summary-details">
-          <div class="meta-header">
-            <span class="badge" id="videoCategory">Vidéo</span>
-            <span class="pub-date">Publié le <strong id="publishDate">-</strong></span>
-          </div>
+      <div class="card full-width video-card">
+        <img id="thumbImg" src="" alt="Thumbnail" class="thumbnail">
+        <div class="video-details">
+          <span class="badge" id="videoCategory">Vidéo</span>
           <h2 id="videoTitle">-</h2>
-          <div class="channel-info">
-            <span class="channel-name" id="channelName">-</span>
-            <span class="video-id">ID: <code id="videoIdDisplay">-</code></span>
+          <p class="channel-name" id="channelName">-</p>
+          <div class="meta-row">
+            <span>Publié le <strong id="publishDate">-</strong></span>
+            <span>ID : <code id="videoIdDisplay">-</code></span>
           </div>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-header">
-          <span class="card-title">Vues globales</span>
-          <span class="card-icon">👁️</span>
-        </div>
+        <div class="card-title">Vues globales</div>
         <div class="card-metric" id="viewCount">-</div>
-        <div class="card-footer" id="viewsPerDay">- vues / jour</div>
+        <div class="card-sub" id="viewsPerDay">- vues / jour</div>
       </div>
 
       <div class="card">
-        <div class="card-header">
-          <span class="card-title">Ratio d'Avis</span>
-          <span class="card-icon">👍</span>
-        </div>
+        <div class="card-title">Taux d'Satisfaction</div>
         <div class="card-metric" id="likeRatio">-</div>
-        <div class="card-footer" id="likesVsDislikes">👍 - / 👎 -</div>
+        <div class="card-sub" id="likesVsDislikes">👍 - / 👎 -</div>
       </div>
 
       <div class="card">
-        <div class="card-header">
-          <span class="card-title">Taux d'Engagement</span>
-          <span class="card-icon">⚡</span>
-        </div>
+        <div class="card-title">Engagement</div>
         <div class="card-metric" id="engagementRate">-</div>
-        <div class="card-footer" id="commentsDensity">- comms / 1k vues</div>
+        <div class="card-sub" id="commentsDensity">- comms / 1k vues</div>
       </div>
 
       <div class="card">
-        <div class="card-header">
-          <span class="card-title">Conversion Abonnés</span>
-          <span class="card-icon">🎯</span>
-        </div>
+        <div class="card-title">Conversion Abonnés</div>
         <div class="card-metric" id="subConversion">-</div>
-        <div class="card-footer">Ratio Vues / Abonnés chaîne</div>
+        <div class="card-sub">Ratio abonnés / vues</div>
       </div>
 
       <div class="card">
-        <div class="card-header">
-          <span class="card-title">Revenu Estimé (Brut)</span>
-          <span class="card-icon">💵</span>
-        </div>
+        <div class="card-title">Revenu Estimé (Brut)</div>
         <div class="card-metric highlight" id="estRevenue">-</div>
-        <div class="card-footer">Fourchette CPM 0.50$ - 2.50$</div>
+        <div class="card-sub">CPM estimé (0.50$ - 2.50$)</div>
       </div>
 
       <div class="card">
-        <div class="card-header">
-          <span class="card-title">Volume Chaîne</span>
-          <span class="card-icon">📢</span>
-        </div>
+        <div class="card-title">Volume Chaîne</div>
         <div class="card-metric" id="channelSubs">-</div>
-        <div class="card-footer" id="channelTotalViews">- vues cumulées</div>
+        <div class="card-sub" id="channelTotalViews">- vues cumulées</div>
       </div>
 
       <div class="card full-width">
-        <div class="card-header">
-          <span class="card-title">Mots-clés &amp; Tags référencés</span>
-          <span class="card-icon">🏷️</span>
-        </div>
-        <div class="tags-flex" id="tagsContainer">
+        <div class="card-title">Tags &amp; Mots-clés</div>
+        <div class="tags-wrapper" id="tagsContainer">
           <span class="no-tags">Aucun tag détecté</span>
         </div>
       </div>
