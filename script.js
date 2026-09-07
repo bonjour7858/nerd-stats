@@ -1,4 +1,4 @@
-const API_KEY = 'AIzaSyAx6nTNIfhwccw2JSJQ_JyYhrBTNn5p7LQ'; -- Cette clé n'est pas utilisable hors de ce site pour qu'elle reste en sécurité ! Cordialement
+const API_KEY = 'AIzaSyAx6nTNIfhwccw2JSJQ_JyYhrBTNn5p7LQ';
 
 const analyzeBtn = document.getElementById('analyzeBtn');
 const urlInput = document.getElementById('urlInput');
