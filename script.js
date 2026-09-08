@@ -1,154 +1,74 @@
-const API_KEY = 'AIzaSyAx6nTNIfhwccw2JSJQ_JyYhrBTNn5p7LQ';
-
-const analyzeBtn = document.getElementById('analyzeBtn');
-const urlInput = document.getElementById('urlInput');
-const errorBox = document.getElementById('errorBox');
-const resultsSection = document.getElementById('resultsSection');
-const statusBadge = document.getElementById('statusBadge');
-
-function parseVideoId(url) {
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-  const match = url.match(regExp);
-  return (match && match[2].length === 11) ? match[2] : null;
+function switchTab(tabId) {
+  document.querySelectorAll('.page').forEach(page => page.classList.remove('active-page'));
+  document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+  
+  const targetPage = document.getElementById('page-' + tabId);
+  if (targetPage) {
+    targetPage.classList.add('active-page');
+  }
+  
+  const activeBtn = Array.from(document.querySelectorAll('.nav-tab')).find(btn => 
+    btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(tabId)
+  );
+  if (activeBtn) {
+    activeBtn.classList.add('active');
+  }
 }
 
-async function runNerdAnalysis() {
-  errorBox.style.display = 'none';
-  statusBadge.textContent = 'FETCHING...';
-  statusBadge.style.color = '#58a6ff';
-  statusBadge.style.borderColor = '#58a6ff';
+const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1546918309377745017/9n1wRbEvzr9tN9u1Ewcy9yJbODmxMODeMTGUSkbOQkgqIYyJkKXDCljYfNBLlG_awCww";
 
-  const rawUrl = urlInput.value.trim();
-  const videoId = parseVideoId(rawUrl);
+document.addEventListener('DOMContentLoaded', () => {
+  const discordForm = document.getElementById('discordForm');
 
-  if (!videoId) {
-    showError('URL YouTube invalide. Vérifie le lien saisi.');
-    return;
-  }
+  if (discordForm) {
+    discordForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const statusDiv = document.getElementById('feedbackStatus');
+      const type = document.getElementById('feedbackType').value;
+      const message = document.getElementById('feedbackMessage').value;
 
-  try {
-    const videoRes = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=${videoId}&key=${API_KEY}`);
-    
-    if (!videoRes.ok) {
-      const errPayload = await videoRes.json();
-      throw new Error(`Google API: ${errPayload.error?.message || videoRes.statusText}`);
-    }
+      statusDiv.style.display = 'none';
 
-    const videoData = await videoRes.json();
-    if (!videoData.items || videoData.items.length === 0) {
-      throw new Error('Vidéo introuvable, supprimée ou privée.');
-    }
-
-    const video = videoData.items[0];
-    const channelId = video.snippet.channelId;
-
-    const channelRes = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${channelId}&key=${API_KEY}`);
-    const channelData = await channelRes.json();
-    const channelStats = channelData.items ? channelData.items[0].statistics : null;
-
-    let dislikes = null;
-    try {
-      const disRes = await fetch(`https://returnyoutubedislikeapi.com/votes?videoId=${videoId}`);
-      if (disRes.ok) {
-        const disData = await disRes.json();
-        dislikes = disData.dislikes;
+      if (DISCORD_WEBHOOK_URL === "TON_WEBHOOK_DISCORD_ICI" || !DISCORD_WEBHOOK_URL) {
+        statusDiv.className = "feedback-msg feedback-error";
+        statusDiv.innerText = "Erreur : Le lien du Webhook Discord n'a pas encore été configuré dans le fichier script.js.";
+        statusDiv.style.display = 'block';
+        return;
       }
-    } catch (e) {}
 
-    renderDashboard(video, channelStats, dislikes);
-    
-    statusBadge.textContent = 'SUCCESS';
-    statusBadge.style.color = '#3fb950';
-    statusBadge.style.borderColor = '#3fb950';
+      const payload = {
+        embeds: [{
+          title: "📩 Nouveau retour anonyme — NerdStats",
+          color: 16738816, // Couleur Orange
+          fields: [
+            { name: "Type", value: type, inline: true },
+            { name: "Message", value: message }
+          ],
+          timestamp: new Date().toISOString()
+        }]
+      };
 
-  } catch (err) {
-    showError(err.message);
-  }
-}
+      try {
+        const response = await fetch(DISCORD_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
 
-function renderDashboard(video, channelStats, dislikes) {
-  const snip = video.snippet;
-  const stats = video.statistics;
+        if (response.ok) {
+          statusDiv.className = "feedback-msg feedback-success";
+          statusDiv.innerText = "Message envoyé avec succès ! Merci pour votre retour.";
+          discordForm.reset();
+        } else {
+          throw new Error();
+        }
+      } catch (err) {
+        statusDiv.className = "feedback-msg feedback-error";
+        statusDiv.innerText = "Erreur lors de l'envoi du message vers Discord.";
+      }
 
-  document.getElementById('thumbImg').src = snip.thumbnails.medium?.url || snip.thumbnails.default?.url;
-  document.getElementById('videoTitle').textContent = snip.title;
-  document.getElementById('channelName').textContent = snip.channelTitle;
-  document.getElementById('videoIdDisplay').textContent = video.id;
-  
-  const pubDate = new Date(snip.publishedAt);
-  document.getElementById('publishDate').textContent = pubDate.toLocaleDateString();
-
-  const views = parseInt(stats.viewCount || 0);
-  const likes = parseInt(stats.likeCount || 0);
-  const comments = parseInt(stats.commentCount || 0);
-
-  document.getElementById('viewCount').textContent = views.toLocaleString();
-
-  const daysOld = Math.max(1, Math.floor((new Date() - pubDate) / (1000 * 60 * 60 * 24)));
-  const vpd = Math.round(views / daysOld);
-  document.getElementById('viewsPerDay').textContent = `~${vpd.toLocaleString()} views/jour (depuis ${daysOld}j)`;
-
-  if (dislikes !== null && dislikes !== undefined) {
-    const totalVotes = likes + dislikes;
-    const ratio = totalVotes > 0 ? ((likes / totalVotes) * 100).toFixed(1) : 0;
-    document.getElementById('likeRatio').textContent = `${ratio}%`;
-    document.getElementById('likesVsDislikes').textContent = `👍 ${likes.toLocaleString()} / 👎 ${dislikes.toLocaleString()}`;
-  } else {
-    document.getElementById('likeRatio').textContent = 'N/A';
-    document.getElementById('likesVsDislikes').textContent = `👍 ${likes.toLocaleString()} / 👎 Masqué`;
-  }
-
-  const engagement = views > 0 ? (((likes + comments) / views) * 100).toFixed(2) : 0;
-  document.getElementById('engagementRate').textContent = `${engagement}%`;
-  
-  const commDensity = views > 0 ? ((comments / views) * 1000).toFixed(1) : 0;
-  document.getElementById('commentsDensity').textContent = `${commDensity} comms / 1k vues`;
-
-  const minRev = ((views / 1000) * 0.50).toFixed(2);
-  const maxRev = ((views / 1000) * 2.50).toFixed(2);
-  document.getElementById('estRevenue').textContent = `$${minRev} - $${maxRev}`;
-
-  if (channelStats) {
-    const subs = parseInt(channelStats.subscriberCount || 0);
-    const channelViews = parseInt(channelStats.viewCount || 0);
-
-    document.getElementById('channelSubs').textContent = subs.toLocaleString();
-    document.getElementById('channelTotalViews').textContent = `${channelViews.toLocaleString()} vues cumulées`;
-
-    const subRatio = subs > 0 ? ((views / subs) * 100).toFixed(1) : 0;
-    document.getElementById('subConversion').textContent = `${subRatio}%`;
-  } else {
-    document.getElementById('channelSubs').textContent = 'Inconnu';
-    document.getElementById('channelTotalViews').textContent = '-';
-    document.getElementById('subConversion').textContent = '-';
-  }
-
-  const tagsContainer = document.getElementById('tagsContainer');
-  tagsContainer.innerHTML = '';
-  if (snip.tags && snip.tags.length > 0) {
-    snip.tags.forEach(tag => {
-      const span = document.createElement('span');
-      span.className = 'mini-tag';
-      span.textContent = `#${tag}`;
-      tagsContainer.appendChild(span);
+      statusDiv.style.display = 'block';
     });
-  } else {
-    tagsContainer.innerHTML = '<span class="no-tags">Aucun tag public détecté</span>';
   }
-
-  resultsSection.classList.remove('hidden');
-}
-
-function showError(msg) {
-  errorBox.textContent = `❌ ${msg}`;
-  errorBox.style.display = 'block';
-  resultsSection.classList.add('hidden');
-  statusBadge.textContent = 'ERROR';
-  statusBadge.style.color = '#f85149';
-  statusBadge.style.borderColor = '#f85149';
-}
-
-analyzeBtn.addEventListener('click', runNerdAnalysis);
-urlInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') runNerdAnalysis();
 });
