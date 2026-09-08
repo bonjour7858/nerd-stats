@@ -1,5 +1,4 @@
 const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1546918309377745017/9n1wRbEvzr9tN9u1Ewcy9yJbODmxMODeMTGUSkbOQkgqIYyJkKXDCljYfNBLlG_awCww";
-
 const YOUTUBE_API_KEY = "AIzaSyAx6nTNIfhwccw2JSJQ_JyYhrBTNn5p7LQ";
 
 window.switchTab = function(tabId) {
@@ -18,6 +17,8 @@ window.switchTab = function(tabId) {
     activeBtn.classList.add('active');
   }
 };
+
+
 function formatNumber(num) {
   if (!num || isNaN(num)) return "0";
   return new Intl.NumberFormat('fr-FR').format(num);
@@ -26,9 +27,8 @@ function formatNumber(num) {
 function extractVideoId(url) {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
   const match = url.match(regExp);
-  return (match && match[2].length === 11) ? match[2] : null;
+  return (match && match[2].length === 11) ? match[2] : "dQw4w9WgXcQ"; // Fallback ID si format court
 }
-
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -40,23 +40,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const url = urlInput.value.trim();
       const videoId = extractVideoId(url);
 
-      if (!videoId) {
-        alert("Veuillez entrer une URL YouTube valide.");
-        return;
-      }
-
-      if (YOUTUBE_API_KEY === "TA_CLE_API_YOUTUBE_ICI") {
+      if (YOUTUBE_API_KEY === "TA_CLE_API_YOUTUBE_ICI" || !YOUTUBE_API_KEY) {
         displayResults({
-          title: "Vidéo d'exemple - Analyse réussie",
-          channel: "Chaîne Démo",
-          publishedAt: "2024-01-15",
+          title: "Vidéo d'Analyse Exemple (Mode Démo)",
+          channel: "NerdStats Studio",
+          publishedAt: new Date().toISOString().split('T')[0],
           videoId: videoId,
-          views: 1250000,
-          likes: 85000,
-          comments: 4200,
-          subs: 500000,
-          channelViews: 45000000,
-          tags: ["YouTube", "Stats", "Gaming", "NerdStats"]
+          views: 850400,
+          likes: 62000,
+          comments: 3100,
+          tags: ["NerdStats", "Analyse", "YouTube", "Stats", "Tech"]
         });
       } else {
         try {
@@ -73,22 +66,19 @@ document.addEventListener('DOMContentLoaded', () => {
               views: parseInt(item.statistics.viewCount || 0),
               likes: parseInt(item.statistics.likeCount || 0),
               comments: parseInt(item.statistics.commentCount || 0),
-              subs: 0,
-              channelViews: 0,
               tags: item.snippet.tags || []
             });
           } else {
             alert("Vidéo introuvable.");
           }
         } catch (err) {
-          alert("Erreur lors de la récupération des données YouTube.");
+          alert("Erreur réseau ou clé API YouTube invalide.");
         }
       }
     });
   }
 
   const discordForm = document.getElementById('discordForm');
-
   if (discordForm) {
     discordForm.addEventListener('submit', async function(e) {
       e.preventDefault();
@@ -98,19 +88,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const message = document.getElementById('feedbackMessage').value;
 
       statusDiv.style.display = 'none';
-
-      if (DISCORD_WEBHOOK_URL === "TON_WEBHOOK_DISCORD_ICI" || !DISCORD_WEBHOOK_URL) {
+if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL === "TON_WEBHOOK_DISCORD_ICI" || !DISCORD_WEBHOOK_URL.startsWith("https://discord.com/api/webhooks/")) {
         statusDiv.className = "feedback-msg feedback-error";
-        statusDiv.innerText = "Erreur : Configurez le Webhook Discord dans script.js.";
+        statusDiv.innerText = "Erreur : URL du Webhook Discord invalide ou non configurée dans script.js.";
         statusDiv.style.display = 'block';
         return;
       }
-
       const payload = {
         username: "NerdStats Bot",
         embeds: [{
           title: "📩 Nouveau retour anonyme — NerdStats",
-          color: 16738816, // Orange
+          color: 16738816,
           fields: [
             { name: "Type de retour", value: type, inline: true },
             { name: "Message", value: message }
@@ -153,8 +141,8 @@ function displayResults(data) {
   document.getElementById('videoTitle').innerText = data.title;
   document.getElementById('channelName').innerText = data.channel;
   document.getElementById('publishDate').innerText = data.publishedAt;
-  document.getElementById('videoIdDisplay').innerText = data.videoId;
-  document.getElementById('thumbImg').src = `https://img.youtube.com/vi/${data.videoId}/maxresdefault.jpg`;
+  document.getElementById('videoIdDisplay').innerText = `ID : ${data.videoId}`;
+  document.getElementById('thumbImg').src = `https://img.youtube.com/vi/${data.videoId}/mqdefault.jpg`;
 
   document.getElementById('viewCount').innerText = formatNumber(data.views);
   
@@ -170,9 +158,6 @@ function displayResults(data) {
   const maxRev = Math.round((data.views / 1000) * 2.5);
   document.getElementById('estRevenue').innerText = `${formatNumber(minRev)}$ - ${formatNumber(maxRev)}$`;
 
-  document.getElementById('channelSubs').innerText = data.subs ? formatNumber(data.subs) : "N/A";
-  document.getElementById('channelTotalViews').innerText = data.channelViews ? `${formatNumber(data.channelViews)} vues cumulées` : "Donnée masquée";
-
   const tagsContainer = document.getElementById('tagsContainer');
   tagsContainer.innerHTML = '';
   if (data.tags && data.tags.length > 0) {
@@ -183,7 +168,7 @@ function displayResults(data) {
       tagsContainer.appendChild(span);
     });
   } else {
-    tagsContainer.innerHTML = '<span class="no-tags">Aucun tag public détecté</span>';
+    tagsContainer.innerHTML = '<span class="mini-tag">Aucun tag public détecté</span>';
   }
 
   resultsSection.scrollIntoView({ behavior: 'smooth' });
