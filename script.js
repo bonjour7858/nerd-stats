@@ -1,5 +1,5 @@
-const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1546918309377745017/9n1wRbEvzr9tN9u1Ewcy9yJbODmxMODeMTGUSkbOQkgqIYyJkKXDCljYfNBLlG_awCww";
 const YOUTUBE_API_KEY = "AIzaSyAx6nTNIfhwccw2JSJQ_JyYhrBTNn5p7LQ";
+const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1546918309377745017/9n1wRbEvzr9tN9u1Ewcy9yJbODmxMODeMTGUSkbOQkgqIYyJkKXDCljYfNBLlG_awCww";
 
 window.switchTab = function(tabId) {
   document.querySelectorAll('.page').forEach(page => page.classList.remove('active-page'));
@@ -18,16 +18,15 @@ window.switchTab = function(tabId) {
   }
 };
 
-
 function formatNumber(num) {
   if (!num || isNaN(num)) return "0";
   return new Intl.NumberFormat('fr-FR').format(num);
 }
 
 function extractVideoId(url) {
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
   const match = url.match(regExp);
-  return (match && match[2].length === 11) ? match[2] : "dQw4w9WgXcQ"; // Fallback ID si format court
+  return match ? match[1] : null;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -40,45 +39,59 @@ document.addEventListener('DOMContentLoaded', () => {
       const url = urlInput.value.trim();
       const videoId = extractVideoId(url);
 
-      if (YOUTUBE_API_KEY === "TA_CLE_API_YOUTUBE_ICI" || !YOUTUBE_API_KEY) {
+      if (!videoId) {
+        alert("Veuillez entrer une URL YouTube valide.");
+        return;
+      }
+
+      if (!YOUTUBE_API_KEY || YOUTUBE_API_KEY === "TA_CLE_API_YOUTUBE_ICI") {
+        alert("Pensez à insérer votre clé API YouTube dans script.js.");
         displayResults({
-          title: "Vidéo d'Analyse Exemple (Mode Démo)",
+          title: "Vidéo Démo — Configuration requise",
           channel: "NerdStats Studio",
           publishedAt: new Date().toISOString().split('T')[0],
           videoId: videoId,
-          views: 850400,
-          likes: 62000,
-          comments: 3100,
-          tags: ["NerdStats", "Analyse", "YouTube", "Stats", "Tech"]
+          views: 186035,
+          likes: 7449,
+          comments: 300,
+          tags: ["NerdStats", "Démo", "YouTube"]
         });
-      } else {
-        try {
-          const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoId}&key=${YOUTUBE_API_KEY}`);
-          const data = await res.json();
-          
-          if (data.items && data.items.length > 0) {
-            const item = data.items[0];
-            displayResults({
-              title: item.snippet.title,
-              channel: item.snippet.channelTitle,
-              publishedAt: item.snippet.publishedAt.split('T')[0],
-              videoId: videoId,
-              views: parseInt(item.statistics.viewCount || 0),
-              likes: parseInt(item.statistics.likeCount || 0),
-              comments: parseInt(item.statistics.commentCount || 0),
-              tags: item.snippet.tags || []
-            });
-          } else {
-            alert("Vidéo introuvable.");
-          }
-        } catch (err) {
-          alert("Erreur réseau ou clé API YouTube invalide.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoId}&key=${YOUTUBE_API_KEY}`);
+        
+        if (!response.ok) {
+          throw new Error(`Erreur HTTP: ${response.status}`);
         }
+
+        const data = await response.json();
+        
+        if (data.items && data.items.length > 0) {
+          const item = data.items[0];
+          displayResults({
+            title: item.snippet.title,
+            channel: item.snippet.channelTitle,
+            publishedAt: item.snippet.publishedAt.split('T')[0],
+            videoId: videoId,
+            views: parseInt(item.statistics.viewCount || 0),
+            likes: parseInt(item.statistics.likeCount || 0),
+            comments: parseInt(item.statistics.commentCount || 0),
+            tags: item.snippet.tags || []
+          });
+        } else {
+          alert("Vidéo introuvable.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Erreur lors de la récupération des données. Vérifiez la clé API et activez la 'YouTube Data API v3' sur Google Cloud.");
       }
     });
   }
 
   const discordForm = document.getElementById('discordForm');
+
   if (discordForm) {
     discordForm.addEventListener('submit', async function(e) {
       e.preventDefault();
@@ -88,12 +101,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const message = document.getElementById('feedbackMessage').value;
 
       statusDiv.style.display = 'none';
-if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL === "TON_WEBHOOK_DISCORD_ICI" || !DISCORD_WEBHOOK_URL.startsWith("https://discord.com/api/webhooks/")) {
+
+      if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL === "TON_WEBHOOK_DISCORD_ICI" || !DISCORD_WEBHOOK_URL.startsWith("https://discord.com/api/webhooks/")) {
         statusDiv.className = "feedback-msg feedback-error";
-        statusDiv.innerText = "Erreur : URL du Webhook Discord invalide ou non configurée dans script.js.";
+        statusDiv.innerText = "Erreur : URL du Webhook Discord invalide ou non configurée.";
         statusDiv.style.display = 'block';
         return;
       }
+
       const payload = {
         username: "NerdStats Bot",
         embeds: [{
@@ -131,7 +146,6 @@ if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL === "TON_WEBHOOK_DISCORD_ICI" ||
   }
 });
 
-
 function displayResults(data) {
   const resultsSection = document.getElementById('resultsSection');
   if (!resultsSection) return;
@@ -141,7 +155,7 @@ function displayResults(data) {
   document.getElementById('videoTitle').innerText = data.title;
   document.getElementById('channelName').innerText = data.channel;
   document.getElementById('publishDate').innerText = data.publishedAt;
-  document.getElementById('videoIdDisplay').innerText = `ID : ${data.videoId}`;
+  document.getElementById('videoIdDisplay').innerText = data.videoId;
   document.getElementById('thumbImg').src = `https://img.youtube.com/vi/${data.videoId}/mqdefault.jpg`;
 
   document.getElementById('viewCount').innerText = formatNumber(data.views);
