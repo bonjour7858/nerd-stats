@@ -141,7 +141,6 @@
       </section>
     </div>
 
-    <!-- PAGE API & DONNÉES -->
     <div id="page-api" class="page">
       <section class="hero">
         <span class="hero-tag">DATA & SOURCES</span>
@@ -189,74 +188,74 @@
       </div>
     </div>
 
-    <div id="page-faq" class="page">
+=    <div id="page-faq" class="page">
       <section class="hero">
         <span class="hero-tag">FAQ</span>
-        <h1 data-i18n="faq_title">Frequently Asked Questions</h1>
+        <h1 data-i18n="nav_faq">Frequently Asked Questions</h1>
       </section>
       <div style="max-width: 750px; margin: 0 auto;">
         
         <details>
-          <summary>What is NerdStats?</summary>
-          <p>NerdStats is a public YouTube analytics platform designed to help creators and analysts inspect public engagement metrics, side-by-side video performance, and transparent data insights.</p>
+          <summary data-i18n="faq_q1">What is NerdStats?</summary>
+          <p data-i18n="faq_a1">NerdStats is a public YouTube analytics platform designed to help creators and analysts inspect public engagement metrics, side-by-side video performance, and transparent data insights.</p>
         </details>
 
         <details>
-          <summary>Where does the data come from?</summary>
-          <p>All data is retrieved live directly from the official YouTube Data API v3 provided by Google.</p>
+          <summary data-i18n="faq_q2">Where does the data come from?</summary>
+          <p data-i18n="faq_a2">All data is retrieved live directly from the official YouTube Data API v3 provided by Google.</p>
         </details>
 
         <details>
-          <summary>Is the revenue estimate accurate?</summary>
-          <p>No public tool can access exact YouTube earnings. Our revenue range is an estimation based on public views and standard industry RPM ranges ($0.50 - $2.50).</p>
+          <summary data-i18n="faq_q3">Is the revenue estimate accurate?</summary>
+          <p data-i18n="faq_a3">No public tool can access exact YouTube earnings. Our revenue range is an estimation based on public views and standard industry RPM ranges ($0.50 - $2.50).</p>
         </details>
 
         <details>
-          <summary>What is NerdScore and how is it calculated?</summary>
-          <p>NerdScore is a custom analytical index (0-100) combining public likes, comments ratio, and audience velocity signals.</p>
+          <summary data-i18n="faq_q4">What is NerdScore and how is it calculated?</summary>
+          <p data-i18n="faq_a4">NerdScore is a custom analytical index (0-100) combining public likes, comments ratio, and audience velocity signals.</p>
         </details>
 
         <details>
-          <summary>Can NerdStats see private YouTube analytics or revenue?</summary>
-          <p>No. NerdStats only accesses publicly available signals. We cannot read private Studio metrics, subscriber retention graphs, or exact RPM.</p>
+          <summary data-i18n="faq_q5">Can NerdStats see private YouTube analytics or revenue?</summary>
+          <p data-i18n="faq_a5">No. NerdStats only accesses publicly available signals. We cannot read private Studio metrics, subscriber retention graphs, or exact RPM.</p>
         </details>
 
         <details>
-          <summary>Can I analyze unlisted or private videos?</summary>
-          <p>You can analyze unlisted videos if you have their URL, but strictly private videos cannot be accessed via the public API.</p>
+          <summary data-i18n="faq_q6">Can I analyze unlisted or private videos?</summary>
+          <p data-i18n="faq_a6">You can analyze unlisted videos if you have their URL, but strictly private videos cannot be accessed via the public API.</p>
         </details>
 
         <details>
-          <summary>How is Public Engagement calculated?</summary>
-          <p>Public Engagement is calculated as: (Public Likes + Public Comments) divided by Total Views, expressed as a percentage.</p>
+          <summary data-i18n="faq_q7">How is Public Engagement calculated?</summary>
+          <p data-i18n="faq_a7">Public Engagement is calculated as: (Public Likes + Public Comments) divided by Total Views, expressed as a percentage.</p>
         </details>
 
         <details>
-          <summary>Does NerdStats store my searches?</summary>
-          <p>No. Searches are processed client-side in real-time. We do not store or track your individual search history.</p>
+          <summary data-i18n="faq_q8">Does NerdStats store my searches?</summary>
+          <p data-i18n="faq_a8">No. Searches are processed client-side in real-time. We do not store or track your individual search history.</p>
         </details>
 
         <details>
-          <summary>Which languages are supported?</summary>
-          <p>NerdStats supports 7 languages: English, Français, Español, Português, Deutsch, 日本語, and 한국어.</p>
+          <summary data-i18n="faq_q9">Which languages are supported?</summary>
+          <p data-i18n="faq_a9">NerdStats supports 7 languages: English, Français, Español, Português, Deutsch, 日本語, and 한국어.</p>
         </details>
 
         <details>
-          <summary>What are the API usage limits?</summary>
-          <p>Requests are governed by Google YouTube API daily quota limits. If a limit is hit, request processing may pause temporarily.</p>
+          <summary data-i18n="faq_q10">What are the API usage limits?</summary>
+          <p data-i18n="faq_a10">Requests are governed by Google YouTube API daily quota limits. If a limit is hit, request processing may pause temporarily.</p>
         </details>
 
       </div>
     </div>
 
-    <div id="page-support" class="page">
+=    <div id="page-support" class="page">
       <section class="hero">
         <span class="hero-tag">CONTACT</span>
         <h1 data-i18n="support_title">Support & Feedback</h1>
         <p data-i18n="support_sub" style="color:var(--text-muted); margin-bottom:30px;">Found a bug or have a suggestion? Send us a message directly.</p>
       </section>
 
-      <form id="supportForm" style="max-width: 600px; margin: 0 auto; background:var(--bg-card); border:1px solid var(--border-card); padding:28px; border-radius:16px;">
+      <form id="supportForm" onsubmit="return false;" style="max-width: 600px; margin: 0 auto; background:var(--bg-card); border:1px solid var(--border-card); padding:28px; border-radius:16px;">
         <div class="form-group">
           <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted);">TYPE</label>
           <select id="supportType" class="custom-select">
@@ -269,10 +268,10 @@
 
         <div class="form-group" style="margin-top:16px;">
           <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted);">MESSAGE</label>
-          <textarea id="supportMsg" placeholder="Describe your bug or suggestion..." required></textarea>
+          <textarea id="supportMsg" placeholder="Describe your bug or suggestion..." required style="width:100%; min-height:120px; padding:12px; border-radius:8px; border:1px solid var(--border-card); background:var(--bg-main); color:var(--text-main); font-family:inherit;"></textarea>
         </div>
 
-        <button type="submit" class="btn-action" style="width:100%; margin-top:20px;" data-i18n="support_send">Send Message</button>
+        <button type="submit" id="supportSubmitBtn" class="btn-action" style="width:100%; margin-top:20px;" data-i18n="support_send">Send Message</button>
 
         <div id="supportStatus" class="hidden" style="margin-top:16px; text-align:center; font-weight:700; font-size:0.9rem;"></div>
       </form>
