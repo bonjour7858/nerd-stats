@@ -37,6 +37,28 @@ const translations = {
     api_est_desc: "Revenue and retention figures are math-based estimates calculated from public view counts and engagement ratios.",
     api_json_title: "Sample API Response Payload",
 
+    faq_q1: "What is NerdStats?",
+    faq_a1: "NerdStats is a public YouTube analytics platform designed to help creators and analysts inspect public engagement metrics, side-by-side video performance, and transparent data insights.",
+    faq_q2: "Where does the data come from?",
+    faq_a2: "All data is retrieved live directly from the official YouTube Data API v3 provided by Google.",
+    faq_q3: "Is the revenue estimate accurate?",
+    faq_a3: "No public tool can access exact YouTube earnings. Our revenue range is an estimation based on public views and standard industry RPM ranges ($0.50 - $2.50).",
+    faq_q4: "What is NerdScore and how is it calculated?",
+    faq_a4: "NerdScore is a custom analytical index (0-100) combining public likes, comments ratio, and audience velocity signals.",
+    faq_q5: "Can NerdStats see private YouTube analytics or revenue?",
+    faq_a5: "No. NerdStats only accesses publicly available signals. We cannot read private Studio metrics, subscriber retention graphs, or exact RPM.",
+    faq_q6: "Can I analyze unlisted or private videos?",
+    faq_a6: "You can analyze unlisted videos if you have their URL, but strictly private videos cannot be accessed via the public API.",
+    faq_q7: "How is Public Engagement calculated?",
+    faq_a7: "Public Engagement is calculated as: (Public Likes + Public Comments) divided by Total Views, expressed as a percentage.",
+    faq_q8: "Does NerdStats store my searches?",
+    faq_a8: "No. Searches are processed client-side in real-time. We do not store or track your individual search history.",
+    faq_q9: "Which languages are supported?",
+    faq_a9: "NerdStats supports 7 languages: English, Français, Español, Português, Deutsch, 日本語, and 한국어.",
+    faq_q10: "What are the API usage limits?",
+    faq_a10: "Requests are governed by Google YouTube API daily quota limits. If a limit is hit, request processing may pause temporarily.",
+
+    // Support
     support_title: "Support & Feedback",
     support_sub: "Found a bug or have a suggestion? Send us a message directly.",
     support_type_bug: "Bug Report",
@@ -45,7 +67,7 @@ const translations = {
     support_type_other: "Other",
     support_send: "Send Message",
     support_success: "Thank you! Your message has been sent successfully.",
-    support_error: "Error sending message. Please try again later."
+    support_error: "Error sending message. Please check your Webhook URL or try again later."
   },
   fr: {
     nav_home: "Accueil",
@@ -85,6 +107,27 @@ const translations = {
     api_est_desc: "Les revenus et métriques de rétention sont des estimations basées sur le nombre de vues et l'engagement public.",
     api_json_title: "Exemple de Réponse API JSON",
 
+    faq_q1: "Qu'est-ce que NerdStats ?",
+    faq_a1: "NerdStats est une plateforme d'analyse YouTube publique conçue pour aider les créateurs et analystes à inspecter les métriques d'engagement et comparer les performances.",
+    faq_q2: "D'où proviennent les données ?",
+    faq_a2: "Toutes les données sont récupérées en direct depuis l'API officielle YouTube Data v3 de Google.",
+    faq_q3: "L'estimation des revenus est-elle exacte ?",
+    faq_a3: "Aucun outil public ne peut accéder aux revenus exacts. Notre plage est une estimation basée sur les vues publiques et un RPM moyen ($0.50 - $2.50).",
+    faq_q4: "Qu'est-ce que le NerdScore et comment est-il calculé ?",
+    faq_a4: "Le NerdScore est un indice analytique (0-100) combinant le ratio de likes, les commentaires et la vitesse d'engagement du public.",
+    faq_q5: "NerdStats accède-t-il aux données privées ?",
+    faq_a5: "Non. NerdStats n'accède qu'aux données publiques. Nous ne pouvons pas lire les statistiques privées YouTube Studio.",
+    faq_q6: "Puis-je analyser une vidéo non répertoriée ou privée ?",
+    faq_a6: "Vous pouvez analyser les vidéos non répertoriées si vous avez l'URL, mais les vidéos strictement privées ne sont pas accessibles.",
+    faq_q7: "Comment est calculé l'engagement public ?",
+    faq_a7: "L'engagement public correspond à : (Likes + Commentaires) divisé par le nombre total de Vues, exprimé en pourcentage.",
+    faq_q8: "NerdStats stocke-t-il mes recherches ?",
+    faq_a8: "Non. Les recherches sont traitées directement dans votre navigateur. Nous ne conservons aucun historique.",
+    faq_q9: "Quelles sont les langues supportées ?",
+    faq_a9: "NerdStats gère 7 langues : Anglais, Français, Espagnol, Portugais, Allemand, Japonais et Coréen.",
+    faq_q10: "Quelles sont les limites d'utilisation de l'API ?",
+    faq_a10: "Les requêtes dépendent des quotas quotidiens fournis par Google. En cas de dépassement, le service peut être temporairement ralenti.",
+
     support_title: "Support & Feedback",
     support_sub: "Un bug à signaler ou une idée d'amélioration ? Envoyez-nous un message.",
     support_type_bug: "Signalement de Bug",
@@ -93,13 +136,8 @@ const translations = {
     support_type_other: "Autre",
     support_send: "Envoyer le Message",
     support_success: "Merci ! Votre message a bien été envoyé.",
-    support_error: "Erreur lors de l'envoi du message. Veuillez réessayer."
-  },
-  es: { nav_home: "Inicio", nav_compare: "Comparar", nav_api: "API & Datos", nav_faq: "FAQ", nav_support: "Soporte" },
-  pt: { nav_home: "Início", nav_compare: "Comparar", nav_api: "API & Dados", nav_faq: "FAQ", nav_support: "Suporte" },
-  de: { nav_home: "Startseite", nav_compare: "Vergleichen", nav_api: "API & Daten", nav_faq: "FAQ", nav_support: "Support" },
-  ja: { nav_home: "ホーム", nav_compare: "比較", nav_api: "APIとデータ", nav_faq: "よくある質問", nav_support: "サポート" },
-  ko: { nav_home: "홈", nav_compare: "비교", nav_api: "API 및 데이터", nav_faq: "자주 묻는 질문", nav_support: "지원" }
+    support_error: "Erreur lors de l'envoi du message. Vérifiez l'URL du Webhook Discord."
+  }
 };
 
 let currentLang = 'en';
@@ -126,7 +164,7 @@ function setLanguage(lang) {
 
 function initI18n() {
   const userLang = navigator.language.slice(0, 2);
-  const supported = ['en', 'fr', 'es', 'pt', 'de', 'ja', 'ko'];
+  const supported = ['en', 'fr'];
   const defaultLang = supported.includes(userLang) ? userLang : 'en';
   setLanguage(defaultLang);
 }
