@@ -11,6 +11,8 @@ window.switchTab = function(tabId) {
     btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(tabId)
   );
   if (activeBtn) activeBtn.classList.add('active');
+  
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -27,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (analyzeBtn && urlInput) {
     analyzeBtn.addEventListener('click', async () => {
       const videoId = extractVideoId(urlInput.value.trim());
-      if (!videoId) return alert("URL invalide.");
+      if (!videoId) return alert("URL invalide / Invalid URL");
       await runAnalysis(videoId);
     });
   }
@@ -45,6 +47,54 @@ document.addEventListener('DOMContentLoaded', () => {
       const dataA = await fetchYouTubeVideoData(idA);
       const dataB = await fetchYouTubeVideoData(idB);
       renderComparison(dataA, dataB);
+    });
+  }
+
+  const supportForm = document.getElementById('supportForm');
+  if (supportForm) {
+    supportForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const statusDiv = document.getElementById('supportStatus');
+      const type = document.getElementById('supportType').value;
+      const msg = document.getElementById('supportMsg').value;
+
+      if (!DISCORD_WEBHOOK_URL || !DISCORD_WEBHOOK_URL.startsWith('https://discord.com')) {
+        statusDiv.style.color = '#ff4444';
+        statusDiv.innerText = "Webhook Discord non configuré.";
+        statusDiv.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const res = await fetch(DISCORD_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: "NerdStats Support",
+            embeds: [{
+              title: "📩 Nouveau Message Support — NerdStats",
+              color: 16738816,
+              fields: [
+                { name: "Type", value: type, inline: true },
+                { name: "Message", value: msg }
+              ],
+              timestamp: new Date().toISOString()
+            }]
+          })
+        });
+
+        if (res.ok) {
+          statusDiv.style.color = 'var(--green-brand)';
+          statusDiv.innerText = translations[currentLang].support_success || "Message envoyé !";
+          supportForm.reset();
+        } else {
+          throw new Error();
+        }
+      } catch (err) {
+        statusDiv.style.color = '#ff4444';
+        statusDiv.innerText = translations[currentLang].support_error || "Erreur lors de l'envoi.";
+      }
+      statusDiv.classList.remove('hidden');
     });
   }
 
@@ -118,16 +168,16 @@ function renderComparison(dataA, dataB) {
         <p style="color:var(--text-muted);">${dataA.channel}</p>
         <hr style="border-color:var(--border-card); margin:12px 0;">
         <p><strong>NerdScore:</strong> ${scoreA}/100</p>
-        <p><strong>${translations[currentLang].stat_views}:</strong> ${formatLocaleNumber(dataA.views)}</p>
-        <p><strong>${translations[currentLang].stat_likes}:</strong> ${formatLocaleNumber(dataA.likes)}</p>
+        <p><strong>${translations[currentLang].stat_views || 'Views'}:</strong> ${formatLocaleNumber(dataA.views)}</p>
+        <p><strong>${translations[currentLang].stat_likes || 'Likes'}:</strong> ${formatLocaleNumber(dataA.likes)}</p>
       </div>
       <div class="compare-card ${scoreB >= scoreA ? 'compare-winner' : ''}">
         <h3>${dataB.title}</h3>
         <p style="color:var(--text-muted);">${dataB.channel}</p>
         <hr style="border-color:var(--border-card); margin:12px 0;">
         <p><strong>NerdScore:</strong> ${scoreB}/100</p>
-        <p><strong>${translations[currentLang].stat_views}:</strong> ${formatLocaleNumber(dataB.views)}</p>
-        <p><strong>${translations[currentLang].stat_likes}:</strong> ${formatLocaleNumber(dataB.likes)}</p>
+        <p><strong>${translations[currentLang].stat_views || 'Views'}:</strong> ${formatLocaleNumber(dataB.views)}</p>
+        <p><strong>${translations[currentLang].stat_likes || 'Likes'}:</strong> ${formatLocaleNumber(dataB.likes)}</p>
       </div>
     </div>
   `;
