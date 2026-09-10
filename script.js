@@ -1,5 +1,5 @@
 const YOUTUBE_API_KEY = "AIzaSyC1A3TlF-R_Zlf16u6cF1qFF53kgQ2gBLs";
-const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1546918309377745017/9n1wRbEvzr9tN9u1Ewcy9yJbODmxMODeMTGUSkbOQkgqIYyJkKXDCljYfNBLlG_awCww";
+const DISCORD_WEBHOOK_URL = "IndisponiblePourLeMoment";
 
 window.switchTab = function(tabId) {
   document.querySelectorAll('.page').forEach(page => page.classList.remove('active-page'));
