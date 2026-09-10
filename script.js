@@ -1,4 +1,4 @@
-const YOUTUBE_API_KEY = "AIzaSyC1A3TlF-R_Zlf16u6cF1qFF53kgQ2gBLs";
+const YOUTUBE_API_KEY = "AIzaSyA96HZN4c_q9kfoKXIlVg5Hpl7uDo1Hihw";
 const DISCORD_WEBHOOK_URL = "IndisponiblePourLeMoment";
 
 window.switchTab = function(tabId) {
