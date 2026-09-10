@@ -1,4 +1,4 @@
-const YOUTUBE_API_KEY = "AIzaSyAx6nTNIfhwccw2JSJQ_JyYhrBTNn5p7LQ";
+const YOUTUBE_API_KEY = "AIzaSyA96HZN4c_q9kfoKXIlVg5Hpl7uDo1Hihw";
 
 function extractVideoId(url) {
   const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
