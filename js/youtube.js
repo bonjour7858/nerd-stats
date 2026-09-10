@@ -20,7 +20,7 @@ function calculateNerdScore(views, likes, comments) {
 }
 
 async function fetchYouTubeVideoData(videoId) {
-  if (!YOUTUBE_API_KEY || YOUTUBE_API_KEY === "TA_CLE_API_YOUTUBE_ICI") {
+  if (!YOUTUBE_API_KEY || YOUTUBE_API_KEY === "AIzaSyA96HZN4c_q9kfoKXIlVg5Hpl7uDo1Hihw") {
     return {
       isDemo: true,
       title: "Demo Analysis — Setup API Key",
