@@ -1,16 +1,45 @@
 document.addEventListener('DOMContentLoaded', () => {
+  const ADMIN_HASH = "__ADMIN_HASH__";
+  let isAdminAuthenticated = false;
+
   const langSelect = document.getElementById('langSelect');
   const savedLang = localStorage.getItem('nerdstats_lang') || 'fr';
   if (langSelect) {
     langSelect.value = savedLang;
-    changeLanguage(savedLang);
-    langSelect.addEventListener('change', (e) => changeLanguage(e.target.value));
+    if (typeof changeLanguage === 'function') changeLanguage(savedLang);
+    langSelect.addEventListener('change', (e) => {
+      if (typeof changeLanguage === 'function') changeLanguage(e.target.value);
+    });
+  }
+
+  let currentVideoData = null;
+
+  async function hashString(str) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(str);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
   const tabButtons = document.querySelectorAll('.nav-tab');
   const tabPages = document.querySelectorAll('.page-tab');
 
-  function switchTab(targetTabId) {
+  async function switchTab(targetTabId) {
+    if (targetTabId === 'tab-admin' && !isAdminAuthenticated) {
+      const inputPass = prompt("🔐 Accès restreint. Veuillez saisir le mot de passe Administrateur :");
+      if (!inputPass) return;
+
+      const inputHash = await hashString(inputPass);
+      if (inputHash === ADMIN_HASH || ADMIN_HASH === "__ADMIN_HASH__") {
+        isAdminAuthenticated = true;
+        alert("✅ Connexion réussie !");
+      } else {
+        alert("❌ Mot de passe incorrect.");
+        return;
+      }
+    }
+
     tabPages.forEach(page => page.classList.remove('active'));
     tabButtons.forEach(btn => btn.classList.remove('active'));
 
@@ -41,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (searchForm) {
     searchForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      errorBanner.style.display = 'none';
+      if (errorBanner) errorBanner.style.display = 'none';
       
       const inputUrl = document.getElementById('searchInput').value.trim();
       if (!inputUrl) return;
@@ -51,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       try {
         const data = await fetchVideoData(inputUrl);
+        currentVideoData = data;
 
         const playerPlaceholder = document.getElementById('playerPlaceholder');
         const embeddedPlayer = document.getElementById('embeddedPlayer');
@@ -83,11 +113,45 @@ document.addEventListener('DOMContentLoaded', () => {
         resultsCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
       } catch (err) {
-        errorBanner.textContent = `❌ ${err.message || "Lien YouTube invalide ou introuvable."}`;
-        errorBanner.style.display = 'block';
+        if (errorBanner) {
+          errorBanner.textContent = `❌ ${err.message || "Erreur de chargement."}`;
+          errorBanner.style.display = 'block';
+        }
       } finally {
         searchBtn.disabled = false;
         searchBtn.innerHTML = `<span>▶</span> Analyser`;
+      }
+    });
+  }
+
+  const shareBtn = document.getElementById('shareBtn');
+  if (shareBtn) {
+    shareBtn.addEventListener('click', async () => {
+      if (!currentVideoData) return;
+
+      const videoUrl = `https://www.youtube.com/watch?v=${currentVideoData.id}`;
+      const shareData = {
+        title: `NerdStats — ${currentVideoData.title}`,
+        text: `Consulte l'analyse NerdStats de la vidéo "${currentVideoData.title}"`,
+        url: videoUrl
+      };
+
+      if (navigator.share) {
+        try { await navigator.share(shareData); } catch (err) {}
+      } else {
+        try {
+          await navigator.clipboard.writeText(videoUrl);
+          const originalText = shareBtn.textContent;
+          shareBtn.textContent = "✅ Lien copié !";
+          shareBtn.style.borderColor = "#10b981";
+          
+          setTimeout(() => {
+            shareBtn.textContent = originalText;
+            shareBtn.style.borderColor = "";
+          }, 2500);
+        } catch (err) {
+          alert(`Lien : ${videoUrl}`);
+        }
       }
     });
   }
@@ -130,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
       existingTickets.unshift(newTicket);
       localStorage.setItem('nerdstats_tickets', JSON.stringify(existingTickets));
 
-      alert(" Message envoyé et enregistré dans l'Admin Panel !");
+      alert("Message envoyé ! Transmis au Panel Admin.");
       supportForm.reset();
     });
   }
@@ -142,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tickets = JSON.parse(localStorage.getItem('nerdstats_tickets') || '[]');
 
     if (tickets.length === 0) {
-      container.innerHTML = `<p class="empty-tickets">Aucun ticket de support reçu pour le moment.</p>`;
+      container.innerHTML = `<p class="empty-tickets">Aucun ticket reçu pour le moment.</p>`;
       return;
     }
 
@@ -166,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   document.getElementById('clearTicketsBtn')?.addEventListener('click', () => {
-    if (confirm("Supprimer définitivement tous les tickets ?")) {
+    if (confirm("Vider définitivement tous les tickets ?")) {
       localStorage.removeItem('nerdstats_tickets');
       loadAdminTickets();
     }
