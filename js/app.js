@@ -2,15 +2,13 @@ const ADMIN_HASH = "__ADMIN_HASH__";
 
 document.addEventListener('DOMContentLoaded', () => {
   const searchForm = document.getElementById('searchForm');
-  const resultsCard = document.getElementById('resultsCard');
-  const searchBtn = document.getElementById('searchBtn');
-
   if (!searchForm) return;
 
   searchForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
     if (!searchInput) return;
     
     const inputUrl = searchInput.value.trim();
@@ -24,16 +22,32 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const data = await fetchVideoData(inputUrl);
 
-      const thumb = document.getElementById('videoThumbnail');
-      if (thumb) thumb.src = data.thumbnail;
+      const setElText = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+      const setElSrc = (id, val) => { const el = document.getElementById(id); if(el) el.src = val; };
 
-      const title = document.getElementById('videoTitle');
-      if (title) title.textContent = data.title;
+      setElSrc('videoThumbnail', data.thumbnail);
+      setElText('videoTitle', data.title);
+      setElText('channelTitle', data.channel);
+      setElText('statViews', data.views.toLocaleString());
+      setElText('statLikes', data.likes.toLocaleString());
+      setElText('statComments', data.comments.toLocaleString());
 
-      const channel = document.getElementById('channelTitle');
-      if (channel) channel.textContent = data.channel;
+      const interactions = data.likes + data.comments;
+      const engagementRate = data.views > 0 ? ((interactions / data.views) * 100).toFixed(2) : "0.00";
+      setElText('statEngagement', `${engagementRate}%`);
 
-      const playerPreview = document.querySelector('.youtube-player-preview') || document.getElementById('videoPlayerContainer') || document.getElementById('youtube-player-preview');
+      const score = Math.min(Math.round((parseFloat(engagementRate) / 5) * 100), 100);
+      setElText('nerdScoreValue', `${score} / 100`);
+
+      const minRev = ((data.views / 1000) * 0.5).toFixed(2);
+      const maxRev = ((data.views / 1000) * 2.5).toFixed(2);
+      setElText('statRevenue', `$${minRev} - $${maxRev}`);
+
+      // Sélecteurs multiples pour s'adapter à ton conteneur vidéo HTML
+      const playerPreview = document.querySelector('.youtube-player-preview') || 
+                            document.getElementById('videoPlayerContainer') || 
+                            document.getElementById('youtube-player-preview') ||
+                            document.getElementById('youtubePlayerPreview');
       if (playerPreview) {
         playerPreview.innerHTML = `
           <iframe 
@@ -48,29 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
       }
 
-      const views = document.getElementById('statViews');
-      if (views) views.textContent = data.views.toLocaleString();
-
-      const likes = document.getElementById('statLikes');
-      if (likes) likes.textContent = data.likes.toLocaleString();
-
-      const comments = document.getElementById('statComments');
-      if (comments) comments.textContent = data.comments.toLocaleString();
-
-      const interactions = data.likes + data.comments;
-      const engagementRate = data.views > 0 ? ((interactions / data.views) * 100).toFixed(2) : "0.00";
-      const engagement = document.getElementById('statEngagement');
-      if (engagement) engagement.textContent = `${engagementRate}%`;
-
-      const score = Math.min(Math.round((parseFloat(engagementRate) / 5) * 100), 100);
-      const nerdScore = document.getElementById('nerdScoreValue');
-      if (nerdScore) nerdScore.textContent = `${score} / 100`;
-
-      const minRev = ((data.views / 1000) * 0.5).toFixed(2);
-      const maxRev = ((data.views / 1000) * 2.5).toFixed(2);
-      const revenue = document.getElementById('statRevenue');
-      if (revenue) revenue.textContent = `$${minRev} - $${maxRev}`;
-
+      const resultsCard = document.getElementById('resultsCard');
       if (resultsCard) {
         resultsCard.style.display = 'block';
         resultsCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
