@@ -10,25 +10,30 @@ document.addEventListener('DOMContentLoaded', () => {
   searchForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const inputUrl = document.getElementById('searchInput').value.trim();
+    const searchInput = document.getElementById('searchInput');
+    if (!searchInput) return;
+    
+    const inputUrl = searchInput.value.trim();
     if (!inputUrl) return;
 
-    searchBtn.disabled = true;
-    searchBtn.innerHTML = `<span>⏳</span> Analyse en cours...`;
+    if (searchBtn) {
+      searchBtn.disabled = true;
+      searchBtn.innerHTML = `<span>⏳</span> Analyse en cours...`;
+    }
 
     try {
       const data = await fetchVideoData(inputUrl);
 
-      const thumbEl = document.getElementById('videoThumbnail');
-      if (thumbEl) thumbEl.src = data.thumbnail;
+      const thumb = document.getElementById('videoThumbnail');
+      if (thumb) thumb.src = data.thumbnail;
 
-      const titleEl = document.getElementById('videoTitle');
-      if (titleEl) titleEl.textContent = data.title;
+      const title = document.getElementById('videoTitle');
+      if (title) title.textContent = data.title;
 
-      const channelEl = document.getElementById('channelTitle');
-      if (channelEl) channelEl.textContent = data.channel;
+      const channel = document.getElementById('channelTitle');
+      if (channel) channel.textContent = data.channel;
 
-      const playerPreview = document.querySelector('.youtube-player-preview') || document.getElementById('videoPlayerContainer');
+      const playerPreview = document.querySelector('.youtube-player-preview') || document.getElementById('videoPlayerContainer') || document.getElementById('youtube-player-preview');
       if (playerPreview) {
         playerPreview.innerHTML = `
           <iframe 
@@ -43,28 +48,28 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
       }
 
-      const viewsEl = document.getElementById('statViews');
-      if (viewsEl) viewsEl.textContent = data.views.toLocaleString();
+      const views = document.getElementById('statViews');
+      if (views) views.textContent = data.views.toLocaleString();
 
-      const likesEl = document.getElementById('statLikes');
-      if (likesEl) likesEl.textContent = data.likes.toLocaleString();
+      const likes = document.getElementById('statLikes');
+      if (likes) likes.textContent = data.likes.toLocaleString();
 
-      const commentsEl = document.getElementById('statComments');
-      if (commentsEl) commentsEl.textContent = data.comments.toLocaleString();
+      const comments = document.getElementById('statComments');
+      if (comments) comments.textContent = data.comments.toLocaleString();
 
       const interactions = data.likes + data.comments;
       const engagementRate = data.views > 0 ? ((interactions / data.views) * 100).toFixed(2) : "0.00";
-      const engagementEl = document.getElementById('statEngagement');
-      if (engagementEl) engagementEl.textContent = `${engagementRate}%`;
+      const engagement = document.getElementById('statEngagement');
+      if (engagement) engagement.textContent = `${engagementRate}%`;
 
       const score = Math.min(Math.round((parseFloat(engagementRate) / 5) * 100), 100);
-      const scoreEl = document.getElementById('nerdScoreValue');
-      if (scoreEl) scoreEl.textContent = `${score} / 100`;
+      const nerdScore = document.getElementById('nerdScoreValue');
+      if (nerdScore) nerdScore.textContent = `${score} / 100`;
 
       const minRev = ((data.views / 1000) * 0.5).toFixed(2);
       const maxRev = ((data.views / 1000) * 2.5).toFixed(2);
-      const revenueEl = document.getElementById('statRevenue');
-      if (revenueEl) revenueEl.textContent = `$${minRev} - $${maxRev}`;
+      const revenue = document.getElementById('statRevenue');
+      if (revenue) revenue.textContent = `$${minRev} - $${maxRev}`;
 
       if (resultsCard) {
         resultsCard.style.display = 'block';
@@ -74,8 +79,10 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) {
       alert(err.message);
     } finally {
-      searchBtn.disabled = false;
-      searchBtn.innerHTML = `<span>▶</span> Analyser`;
+      if (searchBtn) {
+        searchBtn.disabled = false;
+        searchBtn.innerHTML = `<span>▶</span> Analyser`;
+      }
     }
   });
 
