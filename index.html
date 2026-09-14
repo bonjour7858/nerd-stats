@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NerdStats Studio — Public YouTube Analytics</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="./css/main.css">
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand" id="brandLogo">
+        <div class="logo">N</div>
+        <span class="brand-name">NerdStats</span>
+      </div>
+      
+      <nav class="nav-links">
+        <a href="#analyzer" class="nav-tab active" data-tab="tab-analyzer" data-i18n="navAnalyze">Analyser</a>
+        <a href="#faq" class="nav-tab" data-tab="tab-faq" data-i18n="navFaq">FAQ</a>
+        <a href="#support" class="nav-tab" data-tab="tab-support" data-i18n="navSupport">Support</a>
+        <a href="#admin" class="nav-tab admin-link" data-tab="tab-admin">⚙️ Admin Panel</a>
+      </nav>
+
+      <div class="nav-actions">
+        <select id="langSelect" class="lang-select">
+          <option value="fr">🇫🇷 FR - Français</option>
+          <option value="en">🇬🇧 EN - English</option>
+          <option value="es">🇪🇸 ES - Español</option>
+          <option value="de">🇩🇪 DE - Deutsch</option>
+          <option value="ro">🇷🇴 RO - Română</option>
+          <option value="ar">🇸🇦 AR - العربية (RTL)</option>
+          <option value="ja">🇯🇵 JA - 日本語</option>
+          <option value="zh">🇨🇳 ZH - 中文</option>
+          <option value="ko">🇰🇷 KO - 한국어</option>
+        </select>
+        <button class="btn-orange-sm nav-tab" data-tab="tab-analyzer" data-i18n="navAnalyze">Analyser</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <div id="tab-analyzer" class="page-tab active">
+      <section class="hero-section">
+        <div class="hero-content">
+          <span class="badge-tag" data-i18n="heroBadge">ANALYTICS YOUTUBE PUBLIC</span>
+          <h1 class="hero-title"><span data-i18n="heroTitle1">Accrois Tes</span><br><span class="highlight" data-i18n="heroTitle2">Performances !</span></h1>
+          <p class="hero-subtitle" data-i18n="heroSub">
+            NerdStats est l'outil ultime d'audit YouTube. Analysez l'engagement, estimez les revenus et découvrez le NerdScore.
+          </p>
+
+          <form id="searchForm" class="search-hero">
+            <input type="text" id="searchInput" placeholder="Colle le lien d'une vidéo YouTube..." data-i18n-ph="inputPlaceholder" required>
+            <button type="submit" id="searchBtn" class="btn-orange">
+              <span>▶</span> <span data-i18n="analyzeBtn">Analyser</span>
+            </button>
+          </form>
+
+          <div id="errorMessage" class="error-banner" style="display: none;"></div>
+        </div>
+
+        <div class="hero-graphic">
+          <div class="preview-card-mockup pulse-card">
+            <div class="mockup-header">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+              <span class="mockup-title">YouTube Player Preview</span>
+            </div>
+            <div class="mockup-screen" id="playerContainer">
+              <div class="placeholder-screen" id="playerPlaceholder">
+                <div class="play-btn-pulse">▶</div>
+                <p data-i18n="previewPlaceholder">Lance une analyse pour visionner la vidéo ici</p>
+              </div>
+              <iframe id="embeddedPlayer" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="display: none;"></iframe>
+            </div>
+            <div class="mockup-details">
+              <div class="mockup-line w-80"></div>
+              <div class="mockup-line w-50"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="resultsCard" class="results-section fade-in-up" style="display: none;">
+        <div class="box-card result-grid-wrapper">
+          <div class="media-col">
+            <div class="thumb-wrapper">
+              <img id="videoThumbnail" src="" alt="Miniature YouTube">
+            </div>
+            <h2 id="videoTitle">-</h2>
+            <p id="channelTitle" class="channel-name">-</p>
+            
+            <div class="score-card glow-effect">
+              <span class="score-label" data-i18n="lblScore">NERDSCORE</span>
+              <div id="nerdScoreValue" class="score-number">- / 100</div>
+              <span class="score-sub" data-i18n="scoreSub">Indice de viralité & d'engagement</span>
+            </div>
+          </div>
+
+          <div class="stats-col">
+            <div class="stats-grid">
+              <div class="stat-card hover-lift">
+                <span class="label" data-i18n="lblViews">VUES</span>
+                <span id="statViews" class="value">-</span>
+              </div>
+              <div class="stat-card hover-lift">
+                <span class="label" data-i18n="lblLikes">LIKES</span>
+                <span id="statLikes" class="value">-</span>
+              </div>
+              <div class="stat-card hover-lift">
+                <span class="label" data-i18n="lblEngagement">ENGAGEMENT</span>
+                <span id="statEngagement" class="value">-</span>
+              </div>
+              <div class="stat-card hover-lift">
+                <span class="label" data-i18n="lblComments">COMMENTAIRES</span>
+                <span id="statComments" class="value">-</span>
+              </div>
+              <div class="stat-card full revenue-card hover-lift">
+                <span class="label" data-i18n="lblRevenue">REVENUS ESTIMÉS (RPM)</span>
+                <span id="statRevenue" class="value">-</span>
+                <span class="sub" data-i18n="revenueSub">Basé sur un RPM moyen de $0.50 à $2.50</span>
+              </div>
+            </div>
+            <button id="shareBtn" class="btn-secondary glow-on-hover" type="button" data-i18n="shareBtn">Partager le rapport</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="tab-faq" class="page-tab fade-in">
+      <section class="box-card faq-section">
+        <div class="faq-header">
+          <h2 data-i18n="faqTitle">Foire Aux Questions</h2>
+          <p data-i18n="faqSub">Tout ce que vous devez savoir sur le fonctionnement des algorithmes NerdStats.</p>
+          <input type="text" id="faqSearch" placeholder="Rechercher une question..." data-i18n-ph="faqSearchPh" class="faq-search-input">
+        </div>
+
+        <div class="faq-accordion" id="faqAccordion">
+          <div class="faq-item">
+            <button class="faq-question">
+              <span data-i18n="faqQ1">Comment est calculé le NerdScore ?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer"><p data-i18n="faqA1">Le NerdScore croise le taux d'interaction par rapport aux vues.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question">
+              <span data-i18n="faqQ2">D'où viennent les estimations de revenus ?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer"><p data-i18n="faqA2">Des tranches de RPM standardisées sur YouTube ($0.50 à $2.50).</p></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="tab-support" class="page-tab fade-in">
+      <section class="box-card support-section">
+        <h2 data-i18n="supportTitle">Support & Feedback</h2>
+        <p data-i18n="supportSub">Un bug, une question ou une suggestion d'amélioration ? Laisse-nous un message.</p>
+
+        <form id="supportForm" class="support-form">
+          <div class="form-group">
+            <label data-i18n="lblCategory">Catégorie</label>
+            <select id="ticketType">
+              <option value="Bug" data-i18n="optBug">Rapporter un bug</option>
+              <option value="Feature" data-i18n="optFeature">Proposer une fonctionnalité</option>
+              <option value="Question" data-i18n="optQuestion">Question générale</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label data-i18n="lblMessage">Votre message</label>
+            <textarea id="ticketMessage" placeholder="Explique ton problème ou ton idée..." data-i18n-ph="supportPlaceholder" required></textarea>
+          </div>
+
+          <button type="submit" class="btn-orange" data-i18n="sendBtn">Envoyer le message</button>
+        </form>
+      </section>
+    </div>
+
+    <div id="tab-admin" class="page-tab fade-in">
+      <section class="box-card admin-section">
+        <div class="admin-header">
+          <h2>Panel Administration — Tickets Support</h2>
+          <p>Gestionnaire des retours utilisateurs sauvegardés en base locale (`localStorage`).</p>
+          <button id="clearTicketsBtn" class="btn-danger-sm">Vider tous les tickets</button>
+        </div>
+
+        <div id="adminTicketList" class="ticket-list-container">
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/youtube.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

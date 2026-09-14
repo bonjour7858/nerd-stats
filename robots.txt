@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://bonjour7858.github.io/nerd-stats/sitemap.xml
