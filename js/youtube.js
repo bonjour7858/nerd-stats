@@ -1,6 +1,5 @@
 const YOUTUBE_API_KEY = "__YOUTUBE_API_KEY__";
 
-
 function extractVideoId(url) {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
   const match = url.match(regExp);
