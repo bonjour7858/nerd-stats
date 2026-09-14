@@ -1,128 +1,66 @@
-function extractVideoId(url) {
-  if (!url) return null;
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-  const match = url.match(regExp);
-  return (match && match[2].length === 11) ? match[2] : null;
-}
-
-function formatNumber(num) {
-  if (!num || isNaN(num)) return "0";
-  const lang = document.documentElement.lang || 'fr';
-  return new Intl.NumberFormat(lang).format(num);
-}
-
-function calculateNerdScore(views, likes, comments) {
-  if (!views || views === 0) return 0;
-  const engagementRatio = ((likes + comments) / views) * 100;
-  // Score de base ajusté sur un ratio moyen de 5%
-  let score = Math.round((engagementRatio / 5) * 80);
-  if (score > 100) score = 100;
-  if (score < 10) score = 10;
-  return score;
-}
-
-function calculateRevenue(views) {
-  const min = Math.round((views / 1000) * 0.50);
-  const max = Math.round((views / 1000) * 2.50);
-  return `$${formatNumber(min)} — $${formatNumber(max)}`;
-}
-
-async function analyzeVideo() {
-  const inputEl = document.getElementById('searchInput') || document.getElementById('videoUrlInput');
-  if (!inputEl) return;
-  
-  const url = inputEl.value.trim();
-  const videoId = extractVideoId(url);
-
-  if (!videoId) {
-    alert("Veuillez entrer une URL YouTube valide.");
-    return;
-  }
-
-  const apiKey = window.YOUTUBE_API_KEY;
-  if (!apiKey) {
-    alert("Erreur : Clé API YouTube non configurée.");
-    return;
-  }
-
-  const apiUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=${videoId}&key=${apiKey}`;
-
-  try {
-    const response = await fetch(apiUrl);
-    const data = await response.json();
-
-    if (data.error) {
-      alert(`Erreur API YouTube : ${data.error.message}`);
-      return;
-    }
-
-    if (!data.items || data.items.length === 0) {
-      alert("Aucune vidéo trouvée pour cette URL.");
-      return;
-    }
-
-    const video = data.items[0];
-    const snippet = video.snippet;
-    const stats = video.statistics;
-
-    const views = parseInt(stats.viewCount || 0);
-    const likes = parseInt(stats.likeCount || 0);
-    const comments = parseInt(stats.commentCount || 0);
-
-    const titleEl = document.getElementById('videoTitle');
-    const channelEl = document.getElementById('channelTitle');
-    const thumbEl = document.getElementById('videoThumbnail');
-    const viewsEl = document.getElementById('statViews');
-    const likesEl = document.getElementById('statLikes');
-    const commentsEl = document.getElementById('statComments');
-    const engagementEl = document.getElementById('statEngagement');
-    const revenueEl = document.getElementById('statRevenue');
-    const scoreEl = document.getElementById('nerdScoreValue');
-
-    if (titleEl) titleEl.innerText = snippet.title;
-    if (channelEl) channelEl.innerText = `${snippet.channelTitle} • ${snippet.publishedAt.split('T')[0]}`;
-    if (thumbEl) thumbEl.src = snippet.thumbnails.high ? snippet.thumbnails.high.url : snippet.thumbnails.default.url;
-    
-    if (viewsEl) viewsEl.innerText = formatNumber(views);
-    if (likesEl) likesEl.innerText = stats.likeCount ? formatNumber(likes) : "Masqué";
-    if (commentsEl) commentsEl.innerText = stats.commentCount ? formatNumber(comments) : "Masqué";
-
-    const engagementRate = views > 0 ? (((likes + comments) / views) * 100).toFixed(2) : "0.00";
-    if (engagementEl) engagementEl.innerText = `${engagementRate}%`;
-
-    
-    if (revenueEl) revenueEl.innerText = calculateRevenue(views);
-    if (scoreEl) scoreEl.innerText = `${calculateNerdScore(views, likes, comments)} / 100`;
-
-    // 4. Afficher la carte de résultats
-    const resultsContainer = document.getElementById('resultsCard') || document.getElementById('results');
-    if (resultsContainer) {
-      resultsContainer.style.display = 'block';
-    }
-
-  } catch (err) {
-    console.error("Erreur d'analyse :", err);
-    alert("Impossible de charger les données. Vérifiez votre connexion.");
-  }
-}
-
-// Initialisation des événements au chargement
 document.addEventListener('DOMContentLoaded', () => {
+  const searchForm = document.getElementById('searchForm');
+  const resultsCard = document.getElementById('resultsCard');
   const searchBtn = document.getElementById('searchBtn');
-  if (searchBtn) {
-    searchBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      analyzeVideo();
-    });
-  }
 
-  const inputEl = document.getElementById('searchInput') || document.getElementById('videoUrlInput');
-  if (inputEl) {
-    inputEl.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        analyzeVideo();
-      }
+  if (!searchForm) return;
+
+  // Gestion de la soumission du formulaire d'analyse
+  searchForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const inputUrl = document.getElementById('searchInput').value.trim();
+    if (!inputUrl) return;
+
+    // État de chargement du bouton
+    searchBtn.disabled = true;
+    searchBtn.innerHTML = `<span>⏳</span> Analyse en cours...`;
+
+    try {
+      const data = await fetchVideoData(inputUrl);
+
+      // Injection des métadonnées principales
+      document.getElementById('videoThumbnail').src = data.thumbnail;
+      document.getElementById('videoTitle').textContent = data.title;
+      document.getElementById('channelTitle').textContent = data.channel;
+
+      // Formatting des valeurs numériques
+      document.getElementById('statViews').textContent = data.views.toLocaleString();
+      document.getElementById('statLikes').textContent = data.likes.toLocaleString();
+      document.getElementById('statComments').textContent = data.comments.toLocaleString();
+
+      // Calcul du taux d'engagement : (Likes + Commentaires) / Vues
+      const interactions = data.likes + data.comments;
+      const engagementRate = data.views > 0 ? ((interactions / data.views) * 100).toFixed(2) : "0.00";
+      document.getElementById('statEngagement').textContent = `${engagementRate}%`;
+
+      // Calcul du NerdScore (Plafond à 100, basé sur un taux cible de 5%)
+      const score = Math.min(Math.round((parseFloat(engagementRate) / 5) * 100), 100);
+      document.getElementById('nerdScoreValue').textContent = `${score} / 100`;
+
+      // Estimation de revenus sur fourchette RPM ($0.50 - $2.50)
+      const minRev = ((data.views / 1000) * 0.5).toFixed(2);
+      const maxRev = ((data.views / 1000) * 2.5).toFixed(2);
+      document.getElementById('statRevenue').textContent = `$${minRev} - $${maxRev}`;
+
+      // Affichage du composant de résultats et scroll fluide
+      resultsCard.style.display = 'block';
+      resultsCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      searchBtn.disabled = false;
+      searchBtn.innerHTML = `<span>▶</span> Analyser`;
+    }
+  });
+
+  // Copie du lien de rapport dans le presse-papier
+  const shareBtn = document.getElementById('shareBtn');
+  if (shareBtn) {
+    shareBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(window.location.href);
+      alert("Lien du rapport copié dans le presse-papier !");
     });
   }
 });
