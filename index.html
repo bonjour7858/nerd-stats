@@ -24,6 +24,7 @@
         <a href="#analyzer" class="nav-tab active" data-tab="tab-analyzer" data-i18n="navAnalyze">Analyser</a>
         <a href="#faq" class="nav-tab" data-tab="tab-faq" data-i18n="navFaq">FAQ</a>
         <a href="#support" class="nav-tab" data-tab="tab-support" data-i18n="navSupport">Support</a>
+        <a href="#admin" class="nav-tab admin-link" data-tab="tab-admin">⚙️ Admin Panel</a>
       </nav>
 
       <div class="nav-actions">
@@ -37,8 +38,6 @@
           <option value="ja">🇯🇵 JA - 日本語</option>
           <option value="zh">🇨🇳 ZH - 中文</option>
           <option value="ko">🇰🇷 KO - 한국어</option>
-          <option value="pt">🇵🇹 PT - Português</option>
-          <option value="ru">🇷🇺 RU - Русский</option>
         </select>
         <button class="btn-orange-sm nav-tab" data-tab="tab-analyzer" data-i18n="navAnalyze">Analyser</button>
       </div>
@@ -53,7 +52,7 @@
           <span class="badge-tag" data-i18n="heroBadge">ANALYTICS YOUTUBE PUBLIC</span>
           <h1 class="hero-title"><span data-i18n="heroTitle1">Accrois Tes</span><br><span class="highlight" data-i18n="heroTitle2">Performances !</span></h1>
           <p class="hero-subtitle" data-i18n="heroSub">
-            NerdStats est l'outil ultime d'audit YouTube. Analysez l'engagement, estimez les revenus et découvrez le NerdScore de n'importe quelle vidéo.
+            NerdStats est l'outil ultime d'audit YouTube. Analysez l'engagement, estimez les revenus et découvrez le NerdScore.
           </p>
 
           <form id="searchForm" class="search-hero">
@@ -62,6 +61,8 @@
               <span>▶</span> <span data-i18n="analyzeBtn">Analyser</span>
             </button>
           </form>
+
+          <div id="errorMessage" class="error-banner" style="display: none;"></div>
         </div>
 
         <div class="hero-graphic">
@@ -137,7 +138,7 @@
       <section class="box-card faq-section">
         <div class="faq-header">
           <h2 data-i18n="faqTitle">Foire Aux Questions</h2>
-          <p data-i18n="faqSub">Tout ce que vous devez savoir sur le fonctionnement des algorithmes et métriques NerdStats.</p>
+          <p data-i18n="faqSub">Tout ce que vous devez savoir sur le fonctionnement des algorithmes NerdStats.</p>
           <input type="text" id="faqSearch" placeholder="Rechercher une question..." data-i18n-ph="faqSearchPh" class="faq-search-input">
         </div>
 
@@ -147,49 +148,14 @@
               <span data-i18n="faqQ1">Comment est calculé le NerdScore ?</span>
               <span class="faq-icon">+</span>
             </button>
-            <div class="faq-answer">
-              <p data-i18n="faqA1">Le NerdScore croise le taux d'interaction (likes et commentaires) par rapport au volume total de vues. Un score au-dessus de 70 indique une vidéo à très fort engagement public.</p>
-            </div>
+            <div class="faq-answer"><p data-i18n="faqA1">Le NerdScore croise le taux d'interaction par rapport aux vues.</p></div>
           </div>
-
           <div class="faq-item">
             <button class="faq-question">
               <span data-i18n="faqQ2">D'où viennent les estimations de revenus ?</span>
               <span class="faq-icon">+</span>
             </button>
-            <div class="faq-answer">
-              <p data-i18n="faqA2">Les estimations se basent sur des tranches de RPM (Revenu Pour Mille vues) observées globalement sur YouTube ($0.50 à $2.50). Le coût réel varie selon la niche et la géographie de l'audience.</p>
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button class="faq-question">
-              <span data-i18n="faqQ3">Les données sont-elles en temps réel ?</span>
-              <span class="faq-icon">+</span>
-            </button>
-            <div class="faq-answer">
-              <p data-i18n="faqA3">Oui, en utilisant l'API YouTube officielle v3, chaque analyse extrait instantanément les compteurs de la plateforme.</p>
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button class="faq-question">
-              <span data-i18n="faqQ4">Pourquoi certains nombres de likes sont masqués ?</span>
-              <span class="faq-icon">+</span>
-            </button>
-            <div class="faq-answer">
-              <p data-i18n="faqA4">Si le créateur de la vidéo choisit de masquer le nombre de likes depuis YouTube Studio, l'API renverra la valeur 0.</p>
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button class="faq-question">
-              <span data-i18n="faqQ5">Puis-je analyser des YouTube Shorts ?</span>
-              <span class="faq-icon">+</span>
-            </button>
-            <div class="faq-answer">
-              <p data-i18n="faqA5">Absolument ! Colle simplement le lien du Short (ex: youtube.com/shorts/...) et l'outil extraira les statistiques exactement de la même manière.</p>
-            </div>
+            <div class="faq-answer"><p data-i18n="faqA2">Des tranches de RPM standardisées sur YouTube ($0.50 à $2.50).</p></div>
           </div>
         </div>
       </section>
@@ -217,6 +183,19 @@
 
           <button type="submit" class="btn-orange" data-i18n="sendBtn">Envoyer le message</button>
         </form>
+      </section>
+    </div>
+
+    <div id="tab-admin" class="page-tab fade-in">
+      <section class="box-card admin-section">
+        <div class="admin-header">
+          <h2>Panel Administration — Tickets Support</h2>
+          <p>Gestionnaire des retours utilisateurs sauvegardés en base locale (`localStorage`).</p>
+          <button id="clearTicketsBtn" class="btn-danger-sm">Vider tous les tickets</button>
+        </div>
+
+        <div id="adminTicketList" class="ticket-list-container">
+        </div>
       </section>
     </div>
 
