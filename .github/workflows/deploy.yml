@@ -28,7 +28,10 @@ jobs:
           YOUTUBE_KEY: ${{ secrets.YOUTUBE_API_KEY }}
           ADMIN_PASS: ${{ secrets.ADMIN_PASSWORD }}
         run: |
+          echo "Injection des secrets..."
           PASS_HASH=$(echo -n "$ADMIN_PASS" | sha256sum | awk '{print $1}')
+          
+          # Remplace les placeholders dans les fichiers JS
           sed -i "s|__YOUTUBE_API_KEY__|$YOUTUBE_KEY|g" js/youtube.js
           sed -i "s|__ADMIN_HASH__|$PASS_HASH|g" js/app.js
 
