@@ -7,9 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
     langSelect.addEventListener('change', (e) => changeLanguage(e.target.value));
   }
 
-  let currentVideoData = null;
-
-  // 2. Navigation Multi-Pages (SPA)
   const tabButtons = document.querySelectorAll('.nav-tab');
   const tabPages = document.querySelectorAll('.page-tab');
 
@@ -44,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (searchForm) {
     searchForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (errorBanner) errorBanner.style.display = 'none';
+      errorBanner.style.display = 'none';
       
       const inputUrl = document.getElementById('searchInput').value.trim();
       if (!inputUrl) return;
@@ -54,7 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       try {
         const data = await fetchVideoData(inputUrl);
-        currentVideoData = data; 
 
         const playerPlaceholder = document.getElementById('playerPlaceholder');
         const embeddedPlayer = document.getElementById('embeddedPlayer');
@@ -87,48 +83,11 @@ document.addEventListener('DOMContentLoaded', () => {
         resultsCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
       } catch (err) {
-        if (errorBanner) {
-          errorBanner.textContent = `❌ ${err.message || "Lien YouTube invalide ou introuvable."}`;
-          errorBanner.style.display = 'block';
-        }
+        errorBanner.textContent = `❌ ${err.message || "Lien YouTube invalide ou introuvable."}`;
+        errorBanner.style.display = 'block';
       } finally {
         searchBtn.disabled = false;
         searchBtn.innerHTML = `<span>▶</span> Analyser`;
-      }
-    });
-  }
-
-  const shareBtn = document.getElementById('shareBtn');
-  if (shareBtn) {
-    shareBtn.addEventListener('click', async () => {
-      if (!currentVideoData) return;
-
-      const videoUrl = `https://www.youtube.com/watch?v=${currentVideoData.id}`;
-      const shareData = {
-        title: `NerdStats — ${currentVideoData.title}`,
-        text: `Découvre l'analyse NerdStats de la vidéo "${currentVideoData.title}" !`,
-        url: videoUrl
-      };
-
-      if (navigator.share) {
-        try {
-          await navigator.share(shareData);
-        } catch (err) {
-        }
-      } else {
-        try {
-          await navigator.clipboard.writeText(videoUrl);
-          const originalText = shareBtn.textContent;
-          shareBtn.textContent = "✅ Lien copié dans le presse-papier !";
-          shareBtn.style.borderColor = "#10b981";
-          
-          setTimeout(() => {
-            shareBtn.textContent = originalText;
-            shareBtn.style.borderColor = "";
-          }, 2500);
-        } catch (err) {
-          alert(`Lien à partager : ${videoUrl}`);
-        }
       }
     });
   }
@@ -152,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, stepTime);
   }
 
-  // 6. Enregistrement des Tickets Support
   const supportForm = document.getElementById('supportForm');
   if (supportForm) {
     supportForm.addEventListener('submit', (e) => {
@@ -172,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
       existingTickets.unshift(newTicket);
       localStorage.setItem('nerdstats_tickets', JSON.stringify(existingTickets));
 
-      alert("Message envoyé et enregistré dans l'Admin Panel !");
+      alert(" Message envoyé et enregistré dans l'Admin Panel !");
       supportForm.reset();
     });
   }
