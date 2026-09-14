@@ -6,7 +6,6 @@ function extractVideoId(url) {
   return (match && match[2].length === 11) ? match[2] : null;
 }
 
-
 async function fetchVideoData(url) {
   const videoId = extractVideoId(url);
   if (!videoId) {
