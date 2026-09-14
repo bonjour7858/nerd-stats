@@ -114,7 +114,6 @@ body {
   border-color: var(--orange);
 }
 
-/* Boutons */
 .btn-orange {
   background: var(--orange);
   color: #fff;
@@ -169,7 +168,6 @@ body {
   background: #1c202c;
 }
 
-/* Système Multi-Pages (Onglets) */
 .container {
   max-width: 1100px;
   margin: 0 auto;
@@ -184,7 +182,6 @@ body {
   display: block;
 }
 
-/* Animations UI */
 .fade-in {
   animation: fadeIn 0.4s ease forwards;
 }
@@ -364,7 +361,6 @@ body {
 .w-80 { width: 80%; }
 .w-50 { width: 50%; }
 
-/* Carte de Résultats Grid */
 .box-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
@@ -474,7 +470,6 @@ body {
   border-color: rgba(255, 85, 0, 0.4);
 }
 
-/* FAQ Accordion */
 .faq-header {
   margin-bottom: 24px;
 }
@@ -556,6 +551,7 @@ body {
   transition: transform 0.2s;
 }
 
+/* Support Form */
 .support-section h2 {
   font-size: 1.8rem;
   margin-bottom: 8px;
@@ -596,6 +592,21 @@ body {
 .support-form textarea {
   height: 120px;
   resize: vertical;
+}
+
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="rtl"] .nav-container,
+[dir="rtl"] .search-hero,
+[dir="rtl"] .faq-question {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .faq-icon {
+  margin-right: auto;
+  margin-left: 0;
 }
 
 @media (max-width: 800px) {
