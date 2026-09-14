@@ -3,30 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NerdStats Studio — YouTube Analytics</title>
+  <title>NerdStats Studio — Public YouTube Analytics</title>
   
-  <!-- Police Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   
-  <!-- Lien CSS corrigé -->
   <link rel="stylesheet" href="./css/main.css">
 </head>
 <body>
 
-  <!-- Header / Navbar Style Paladium -->
   <header class="navbar">
     <div class="nav-container">
-      <div class="brand">
+      <div class="brand" id="brandLogo">
         <div class="logo">N</div>
         <span class="brand-name">NerdStats</span>
       </div>
       
       <nav class="nav-links">
-        <a href="#analyzer" class="active">Analyser</a>
-        <a href="#faq">FAQ</a>
-        <a href="#support">Support</a>
+        <a href="#analyzer" class="nav-tab active" data-tab="tab-analyzer" data-i18n="navAnalyze">Analyser</a>
+        <a href="#faq" class="nav-tab" data-tab="tab-faq" data-i18n="navFaq">FAQ</a>
+        <a href="#support" class="nav-tab" data-tab="tab-support" data-i18n="navSupport">Support</a>
       </nav>
 
       <div class="nav-actions">
@@ -35,121 +32,192 @@
           <option value="en">EN</option>
           <option value="de">DE</option>
           <option value="es">ES</option>
+          <option value="pt">PT</option>
+          <option value="ja">JA</option>
+          <option value="ko">KO</option>
         </select>
-        <a href="#analyzer" class="btn-orange-sm">Analyser</a>
+        <button class="btn-orange-sm nav-tab" data-tab="tab-analyzer" data-i18n="navAnalyze">Analyser</button>
       </div>
     </div>
   </header>
 
   <main class="container">
-    <!-- Hero Section -->
-    <section id="analyzer" class="hero-section">
-      <div class="hero-content">
-        <span class="badge-tag">ANALYTICS YOUTUBE PUBLIC</span>
-        <h1 class="hero-title">Accrois Tes<br><span class="highlight">Performances !</span></h1>
-        <p class="hero-subtitle">
-          NerdStats est l'outil ultime d'audit YouTube. Analysez l'engagement, estimez les revenus et découvrez le NerdScore de n'importe quelle vidéo.
-        </p>
 
-        <!-- Formulaire de recherche -->
-        <form id="searchForm" class="search-hero">
-          <input type="text" id="searchInput" placeholder="Colle le lien d'une vidéo YouTube..." required>
-          <button type="submit" id="searchBtn" class="btn-orange">
-            <span>▶</span> Analyser
-          </button>
-        </form>
-      </div>
+    <div id="tab-analyzer" class="page-tab active">
+      <section class="hero-section">
+        <div class="hero-content">
+          <span class="badge-tag" data-i18n="heroBadge">ANALYTICS YOUTUBE PUBLIC</span>
+          <h1 class="hero-title"><span data-i18n="heroTitle1">Accrois Tes</span><br><span class="highlight" data-i18n="heroTitle2">Performances !</span></h1>
+          <p class="hero-subtitle" data-i18n="heroSub">
+            NerdStats est l'outil ultime d'audit YouTube. Analysez l'engagement, estimez les revenus et découvrez le NerdScore de n'importe quelle vidéo.
+          </p>
 
-      <!-- Preview Visuelle / Graphic -->
-      <div class="hero-graphic">
-        <div class="preview-card-mockup">
-          <div class="mockup-header">
-            <span class="dot"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
-          </div>
-          <div class="mockup-thumb">
-            <span>▶</span>
-          </div>
-          <div class="mockup-line w-80"></div>
-          <div class="mockup-line w-50"></div>
+          <form id="searchForm" class="search-hero">
+            <input type="text" id="searchInput" placeholder="Colle le lien d'une vidéo YouTube..." data-i18n-ph="inputPlaceholder" required>
+            <button type="submit" id="searchBtn" class="btn-orange">
+              <span>▶</span> <span data-i18n="analyzeBtn">Analyser</span>
+            </button>
+          </form>
         </div>
-      </div>
-    </section>
 
-    <!-- Carte de Résultats (Masquée par défaut) -->
-    <section id="resultsCard" class="results-section" style="display: none; margin-bottom: 60px;">
-      <div class="box-card">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center;">
-          <div>
-            <img id="videoThumbnail" src="" alt="Miniature YouTube" style="width: 100%; border-radius: 8px; margin-bottom: 12px;">
-            <h2 id="videoTitle" style="font-size: 1.2rem; margin-bottom: 4px;">-</h2>
-            <p id="channelTitle" style="color: var(--text-muted); font-size: 0.9rem;">-</p>
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 12px;">
-            <div style="background: var(--bg-dark); padding: 16px; border-radius: 8px;">
-              <span style="font-size: 0.75rem; color: var(--orange); font-weight: 800;">NERDSCORE</span>
-              <div id="nerdScoreValue" style="font-size: 2rem; font-weight: 900;">- / 100</div>
+        <div class="hero-graphic">
+          <div class="preview-card-mockup pulse-card">
+            <div class="mockup-header">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+              <span class="mockup-title">YouTube Player Preview</span>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-              <div style="background: var(--bg-dark); padding: 10px; border-radius: 6px;">
-                <span style="font-size: 0.7rem; color: var(--text-muted);">VUES</span>
-                <div id="statViews" style="font-weight: 700;">-</div>
+            <div class="mockup-screen" id="playerContainer">
+              <div class="placeholder-screen" id="playerPlaceholder">
+                <div class="play-btn-pulse">▶</div>
+                <p data-i18n="previewPlaceholder">Lance une analyse pour visionner la vidéo ici</p>
               </div>
-              <div style="background: var(--bg-dark); padding: 10px; border-radius: 6px;">
-                <span style="font-size: 0.7rem; color: var(--text-muted);">LIKES</span>
-                <div id="statLikes" style="font-weight: 700;">-</div>
-              </div>
-              <div style="background: var(--bg-dark); padding: 10px; border-radius: 6px;">
-                <span style="font-size: 0.7rem; color: var(--text-muted);">ENGAGEMENT</span>
-                <div id="statEngagement" style="font-weight: 700;">-</div>
-              </div>
-              <div style="background: var(--bg-dark); padding: 10px; border-radius: 6px;">
-                <span style="font-size: 0.7rem; color: var(--text-muted);">COMMENTAIRES</span>
-                <div id="statComments" style="font-weight: 700;">-</div>
-              </div>
+              <iframe id="embeddedPlayer" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="display: none;"></iframe>
             </div>
-            <div style="background: var(--bg-dark); padding: 10px; border-radius: 6px;">
-              <span style="font-size: 0.7rem; color: var(--text-muted);">REVENUS ESTIMÉS</span>
-              <div id="statRevenue" style="font-weight: 700; color: #10b981;">-</div>
+            <div class="mockup-details">
+              <div class="mockup-line w-80"></div>
+              <div class="mockup-line w-50"></div>
             </div>
-            <button id="shareBtn" class="btn-secondary" type="button">Partager le rapport</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Sections FAQ & Support Grid -->
-    <div class="content-grid">
-      <section id="faq" class="box-card">
-        <h3>Foire Aux Questions</h3>
-        <div class="faq-list">
-          <div class="faq-item">
-            <h4>Comment est calculé le NerdScore ?</h4>
-            <p>Il croise les likes, commentaires et vues pour donner une note d'engagement globale sur 100.</p>
-          </div>
-          <div class="faq-item">
-            <h4>D'où viennent les estimations de revenus ?</h4>
-            <p>Elles reposent sur les moyennes de marché pour le RPM YouTube global.</p>
           </div>
         </div>
       </section>
 
-      <section id="support" class="box-card">
-        <h3>Support / Feedback</h3>
+      <section id="resultsCard" class="results-section fade-in-up" style="display: none;">
+        <div class="box-card result-grid-wrapper">
+          <div class="media-col">
+            <div class="thumb-wrapper">
+              <img id="videoThumbnail" src="" alt="Miniature YouTube">
+            </div>
+            <h2 id="videoTitle">-</h2>
+            <p id="channelTitle" class="channel-name">-</p>
+            
+            <div class="score-card glow-effect">
+              <span class="score-label" data-i18n="lblScore">NERDSCORE</span>
+              <div id="nerdScoreValue" class="score-number">- / 100</div>
+              <span class="score-sub" data-i18n="scoreSub">Indice de viralité & d'engagement</span>
+            </div>
+          </div>
+
+          <div class="stats-col">
+            <div class="stats-grid">
+              <div class="stat-card hover-lift">
+                <span class="label" data-i18n="lblViews">VUES</span>
+                <span id="statViews" class="value">-</span>
+              </div>
+              <div class="stat-card hover-lift">
+                <span class="label" data-i18n="lblLikes">LIKES</span>
+                <span id="statLikes" class="value">-</span>
+              </div>
+              <div class="stat-card hover-lift">
+                <span class="label" data-i18n="lblEngagement">ENGAGEMENT</span>
+                <span id="statEngagement" class="value">-</span>
+              </div>
+              <div class="stat-card hover-lift">
+                <span class="label" data-i18n="lblComments">COMMENTAIRES</span>
+                <span id="statComments" class="value">-</span>
+              </div>
+              <div class="stat-card full revenue-card hover-lift">
+                <span class="label" data-i18n="lblRevenue">REVENUS ESTIMÉS (RPM)</span>
+                <span id="statRevenue" class="value">-</span>
+                <span class="sub" data-i18n="revenueSub">Basé sur un RPM moyen de $0.50 à $2.50</span>
+              </div>
+            </div>
+            <button id="shareBtn" class="btn-secondary glow-on-hover" type="button" data-i18n="shareBtn">Partager le rapport</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="tab-faq" class="page-tab fade-in">
+      <section class="box-card faq-section">
+        <div class="faq-header">
+          <h2 data-i18n="faqTitle">Foire Aux Questions</h2>
+          <p data-i18n="faqSub">Tout ce que vous devez savoir sur le fonctionnement des algorithmes et métriques NerdStats.</p>
+          <input type="text" id="faqSearch" placeholder="Rechercher une question..." data-i18n-ph="faqSearchPh" class="faq-search-input">
+        </div>
+
+        <div class="faq-accordion" id="faqAccordion">
+          <div class="faq-item">
+            <button class="faq-question">
+              <span data-i18n="faqQ1">Comment est calculé le NerdScore ?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p data-i18n="faqA1">Le NerdScore croise le taux d'interaction (likes et commentaires) par rapport au volume total de vues. Un score au-dessus de 70 indique une vidéo à très fort engagement public.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span data-i18n="faqQ2">D'où viennent les estimations de revenus ?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p data-i18n="faqA2">Les estimations se basent sur des tranches de RPM (Revenu Pour Mille vues) observées globalement sur YouTube ($0.50 à $2.50). Le coût réel varie selon la niche et la géographie de l'audience.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span data-i18n="faqQ3">Les données sont-elles en temps réel ?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p data-i18n="faqA3">Oui, en utilisant l'API YouTube officielle v3, chaque analyse extrait instantanément les compteurs de la plateforme.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span data-i18n="faqQ4">Pourquoi certains nombres de likes sont masqués ?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p data-i18n="faqA4">Si le créateur de la vidéo choisit de masquer le nombre de likes depuis YouTube Studio, l'API renverra la valeur 0.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span data-i18n="faqQ5">Puis-je analyser des YouTube Shorts ?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p data-i18n="faqA5">Absolument ! Colle simplement le lien du Short (ex: youtube.com/shorts/...) et l'outil extraira les statistiques exactement de la même manière.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="tab-support" class="page-tab fade-in">
+      <section class="box-card support-section">
+        <h2 data-i18n="supportTitle">Support & Feedback</h2>
+        <p data-i18n="supportSub">Un bug, une question ou une suggestion d'amélioration ? Laisse-nous un message.</p>
+
         <form id="supportForm" class="support-form">
-          <select id="ticketType">
-            <option value="Bug">Rapporter un bug</option>
-            <option value="Feature">Proposer une idée</option>
-          </select>
-          <textarea id="ticketMessage" placeholder="Explique ton problème ou ton idée..." required></textarea>
-          <button type="submit" class="btn-secondary">Envoyer</button>
+          <div class="form-group">
+            <label data-i18n="lblCategory">Catégorie</label>
+            <select id="ticketType">
+              <option value="Bug" data-i18n="optBug">Rapporter un bug</option>
+              <option value="Feature" data-i18n="optFeature">Proposer une fonctionnalité</option>
+              <option value="Question" data-i18n="optQuestion">Question générale</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label data-i18n="lblMessage">Votre message</label>
+            <textarea id="ticketMessage" placeholder="Explique ton problème ou ton idée..." data-i18n-ph="supportPlaceholder" required></textarea>
+          </div>
+
+          <button type="submit" class="btn-orange" data-i18n="sendBtn">Envoyer le message</button>
         </form>
       </section>
     </div>
+
   </main>
 
-  <!-- Scripts JS -->
   <script src="js/i18n.js"></script>
   <script src="js/youtube.js"></script>
   <script src="js/app.js"></script>
