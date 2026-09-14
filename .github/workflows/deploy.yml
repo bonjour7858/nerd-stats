@@ -1,0 +1,30 @@
+name: Build and Deploy to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Inject Secrets into JavaScript
+        env:
+          YOUTUBE_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          ADMIN_PASS: ${{ secrets.ADMIN_PASSWORD }}
+        run: |
+          PASS_HASH=$(echo -n "$ADMIN_PASS" | sha256sum | awk '{print $1}')
+          sed -i "s|__YOUTUBE_API_KEY__|$YOUTUBE_KEY|g" js/youtube.js
+          sed -i "s|__ADMIN_HASH__|$PASS_HASH|g" js/app.js
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
