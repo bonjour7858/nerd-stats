@@ -1,286 +1,276 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NerdStats — Public YouTube Analytics</title>
-  <meta name="description" content="Analyze public YouTube videos and channels with transparent metrics, engagement insights, and comparisons.">
-  
-  <meta property="og:title" content="NerdStats — Public YouTube Analytics">
-  <meta property="og:description" content="Analyze public YouTube videos and channels with transparent metrics and comparisons.">
-  <meta property="og:type" content="website">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
-  
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/components.css">
   <style>
-    pre.json-box {
-      background: var(--bg-main); border: 1px solid var(--border-card);
-      padding: 16px; border-radius: 10px; color: #38bdf8; font-family: monospace;
-      font-size: 0.85rem; overflow-x: auto; text-align: left;
+    :root {
+      --bg-color: #0f1117;
+      --card-bg: #161922;
+      --card-inner: #1e2230;
+      --text-main: #ffffff;
+      --text-sub: #8a8f9d;
+      --accent-color: #ff4500;
+      --green-color: #00e676;
+      --border-color: #2a2e3d;
     }
-    details summary { cursor: pointer; font-weight: 700; font-size: 1rem; color: var(--text-main); outline: none; }
-    details { background: var(--bg-card); border: 1px solid var(--border-card); padding: 18px; border-radius: 12px; margin-bottom: 12px; text-align: left; }
-    details p { color: var(--text-muted); font-size: 0.9rem; margin-top: 10px; line-height: 1.5; }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    header {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+    }
+
+    p.subtitle {
+      color: var(--text-sub);
+      font-size: 0.95rem;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      max-width: 650px;
+      margin-bottom: 30px;
+    }
+
+    .search-box input {
+      flex: 1;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background-color: var(--card-bg);
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .search-box button {
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: none;
+      background-color: var(--accent-color);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .search-box button:hover {
+      background-color: #e03d00;
+    }
+
+    /* Carte de résultats */
+    .analysis-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      width: 100%;
+      max-width: 750px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 650px) {
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .thumb-container img {
+      width: 100%;
+      border-radius: 8px;
+      object-fit: cover;
+      aspect-ratio: 16/9;
+    }
+
+    .video-info h2 {
+      font-size: 1.2rem;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .video-info .channel {
+      color: var(--text-sub);
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .stat-box {
+      background-color: var(--card-inner);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .stat-box .label {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .stat-box .value {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .revenue-box .value {
+      color: var(--green-color);
+    }
+
+    .revenue-box .subtext {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+
+    .score-box {
+      border: 1px solid var(--accent-color);
+      text-align: center;
+      padding: 16px;
+    }
+
+    .score-box .score-val {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .share-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: var(--card-inner);
+      border: 1px solid var(--border-color);
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .share-btn:hover {
+      background-color: var(--border-color);
+    }
   </style>
 </head>
 <body>
 
-  <header class="navbar">
-    <div class="nav-container">
-      <div class="brand" onclick="switchTab('home')">
-        <span class="logo-symbol">N</span>
-        <span class="logo-text">NerdStats</span>
-      </div>
-      <nav class="nav-links">
-        <button class="nav-tab active" onclick="switchTab('home')" data-i18n="nav_home">Home</button>
-        <button class="nav-tab" onclick="switchTab('compare')" data-i18n="nav_compare">Compare</button>
-        <button class="nav-tab" onclick="switchTab('api')" data-i18n="nav_api">API & Data</button>
-        <button class="nav-tab" onclick="switchTab('faq')" data-i18n="nav_faq">FAQ</button>
-        <button class="nav-tab" onclick="switchTab('support')" data-i18n="nav_support">Support</button>
-      </nav>
-      <div class="nav-right">
-        <select id="langSelect" class="lang-select" aria-label="Language Selector">
-          <option value="en">🇬🇧 EN</option>
-          <option value="fr">🇫🇷 FR</option>
-          <option value="es">🇪🇸 ES</option>
-          <option value="pt">🇧🇷 PT</option>
-          <option value="de">🇩🇪 DE</option>
-          <option value="ja">🇯🇵 JA</option>
-          <option value="ko">🇰🇷 KO</option>
-        </select>
-      </div>
-    </div>
+  <header>
+    <h1>NerdStats Studio</h1>
+    <p class="subtitle">Analyse publique et métriques YouTube en temps réel</p>
   </header>
 
-  <main class="main-content">
-    
-    <div id="page-home" class="page active-page">
-      <section class="hero">
-        <span class="hero-tag" data-i18n="hero_tag">PUBLIC YOUTUBE ANALYTICS</span>
-        <h1 data-i18n="hero_title">Understand YouTube. Better.</h1>
-        <p data-i18n="hero_sub">Analyze public YouTube videos and channels with transparent metrics, engagement insights, and side-by-side comparisons.</p>
+  <!-- Barre de recherche -->
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Colle le lien d'une vidéo YouTube ici...">
+    <button id="searchBtn">Analyser</button>
+  </div>
 
-        <div class="search-container">
-          <input type="text" id="urlInput" data-i18n="search_placeholder" placeholder="Paste a YouTube video or channel URL..." autocomplete="off">
-          <button class="btn-action" id="analyzeBtn" data-i18n="search_btn">Analyze</button>
+  <!-- Carte d'analyse (Masquée par défaut grâce à style="display: none;") -->
+  <div id="resultsCard" class="analysis-card" style="display: none;">
+    <div class="card-grid">
+      
+      <!-- Colonne Gauche : Miniature, Titre, Score -->
+      <div>
+        <div class="thumb-container">
+          <img id="videoThumbnail" src="" alt="Miniature Vidéo">
         </div>
-        <div class="search-example" data-i18n="search_example">Example: https://www.youtube.com/watch?v=dQw4w9WgXcQ</div>
 
-        <div id="resultsSection" class="dashboard-grid hidden">
-          <div class="video-meta-box">
-            <img id="thumbImg" class="video-thumb" src="" alt="Thumbnail">
-            <h2 id="videoTitle">Title</h2>
-            <p><span id="channelName">...</span> • <span id="publishDate">...</span></p>
+        <div class="video-info" style="margin-top: 15px;">
+          <h2 id="videoTitle">-</h2>
+          <div id="channelTitle" class="channel">-</div>
+        </div>
 
-            <div class="nerdscore-card">
-              <div class="nerdscore-title">NerdScore</div>
-              <div class="nerdscore-value" id="nerdScoreVal">0 / 100</div>
-              <div class="nerdscore-sub" data-i18n="nerdscore_explain">Calculated using public engagement signals.</div>
-            </div>
-
-            <div class="share-bar">
-              <button class="btn-secondary" id="shareBtn" data-i18n="share_btn">Share Analysis</button>
-            </div>
-          </div>
-
-          <div>
-            <div class="metrics-grid">
-              <div class="metric-card">
-                <div class="m-title" data-i18n="stat_views">Views</div>
-                <div class="m-value" id="viewCount">0</div>
-              </div>
-              <div class="metric-card">
-                <div class="m-title" data-i18n="stat_likes">Likes</div>
-                <div class="m-value" id="likeCount">0</div>
-              </div>
-              <div class="metric-card">
-                <div class="m-title" data-i18n="stat_engagement">Public Engagement</div>
-                <div class="m-value" id="engagementRate">0%</div>
-              </div>
-              <div class="metric-card">
-                <div class="m-title" data-i18n="stat_comments">Comments</div>
-                <div class="m-value" id="commentCount">0</div>
-              </div>
-              <div class="metric-card" style="grid-column: span 2;">
-                <div class="m-title" data-i18n="stat_revenue">Estimated Revenue</div>
-                <div class="m-value" id="estRevenue" style="color:var(--green-brand);">$0 - $0</div>
-                <div class="m-sub" data-i18n="revenue_disclaimer" style="font-size: 0.72rem; color: var(--text-muted); margin-top:6px;">
-                  Estimated based on assumed RPM ranges ($0.50 - $2.50). Actual creator revenue varies.
-                </div>
-              </div>
-            </div>
+        <div class="stat-box score-box" style="margin-top: 15px;">
+          <div class="label">NERDSCORE</div>
+          <div id="nerdScoreValue" class="score-val">- / 100</div>
+          <div style="font-size: 0.75rem; color: var(--text-sub); margin-top: 4px;">
+            Basé sur les signaux d'engagement publics.
           </div>
         </div>
-      </section>
+      </div>
 
-      <section style="margin-top: 80px; text-align: center;">
-        <h3 data-i18n="trust_title" style="font-size: 1.4rem; margin-bottom: 10px;">What data does NerdStats use?</h3>
-        <p data-i18n="trust_desc" style="color: var(--text-muted); max-width: 600px; margin: 0 auto;">
-          NerdStats relies exclusively on publicly accessible data provided via the official YouTube Data API v3.
-        </p>
-      </section>
-    </div>
-
-    <div id="page-compare" class="page">
-      <section class="hero">
-        <span class="hero-tag">VERSUS</span>
-        <h1 data-i18n="compare_title">Side-by-Side Comparison</h1>
-        <p style="color:var(--text-muted); margin-bottom:20px;">Compare performance and engagement metrics between two videos.</p>
-
-        <div style="display: flex; gap: 12px; max-width: 700px; margin: 20px auto;">
-          <input type="text" id="urlA" placeholder="YouTube Video URL A">
-          <input type="text" id="urlB" placeholder="YouTube Video URL B">
-        </div>
-        <button class="btn-action" id="compareRunBtn" data-i18n="compare_btn">Compare Videos</button>
-
-        <div id="compareResults" class="hidden"></div>
-      </section>
-    </div>
-
-    <div id="page-api" class="page">
-      <section class="hero">
-        <span class="hero-tag">DATA & SOURCES</span>
-        <h1 data-i18n="api_title">API & Data Transparency</h1>
-        <p data-i18n="api_sub" style="color:var(--text-muted); margin-bottom:40px;">How NerdStats fetches, processes, and displays public YouTube metrics.</p>
-      </section>
-
-      <div style="max-width: 800px; margin: 0 auto; display: grid; gap: 20px;">
-        <div class="metric-card">
-          <h3 data-i18n="api_source_title" style="color:var(--orange-brand); margin-bottom:6px;">Data Source</h3>
-          <p data-i18n="api_source_desc" style="color:var(--text-muted); font-size:0.9rem;">All video statistics are fetched in real-time directly from the official Google YouTube Data API v3.</p>
+      <!-- Colonne Droite : Métriques clés -->
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="label">VUES</div>
+          <div id="statViews" class="value">-</div>
         </div>
 
-        <div class="metric-card">
-          <h3 data-i18n="api_limits_title" style="color:var(--orange-brand); margin-bottom:6px;">API Quotas & Limits</h3>
-          <p data-i18n="api_limits_desc" style="color:var(--text-muted); font-size:0.9rem;">Google enforces daily quota units on API calls. During high traffic, updates may be throttled to preserve availability.</p>
+        <div class="stat-box">
+          <div class="label">LIKES</div>
+          <div id="statLikes" class="value">-</div>
         </div>
 
-        <div class="metric-card">
-          <h3 data-i18n="api_freq_title" style="color:var(--orange-brand); margin-bottom:6px;">Data Refresh Rate</h3>
-          <p data-i18n="api_freq_desc" style="color:var(--text-muted); font-size:0.9rem;">Metrics reflect the exact public values stored by YouTube at the time of your search request.</p>
+        <div class="stat-box">
+          <div class="label">ENGAGEMENT PUBLIC</div>
+          <div id="statEngagement" class="value">-</div>
         </div>
 
-        <div class="metric-card">
-          <h3 data-i18n="api_est_title" style="color:var(--orange-brand); margin-bottom:6px;">About Estimates</h3>
-          <p data-i18n="api_est_desc" style="color:var(--text-muted); font-size:0.9rem;">Revenue and retention figures are math-based estimates calculated from public view counts and engagement ratios.</p>
+        <div class="stat-box">
+          <div class="label">COMMENTAIRES</div>
+          <div id="statComments" class="value">-</div>
         </div>
 
-        <div class="metric-card">
-          <h3 data-i18n="api_json_title" style="color:var(--orange-brand); margin-bottom:12px;">Sample API Response Payload</h3>
-<pre class="json-box">
-{
-  "kind": "youtube#videoListResponse",
-  "items": [{
-    "id": "dQw4w9WgXcQ",
-    "statistics": {
-      "viewCount": "1502930400",
-      "likeCount": "17820100",
-      "commentCount": "2104900"
-    }
-  }]
-}
-</pre>
+        <div class="stat-box full-width revenue-box">
+          <div class="label">REVENU ESTIMÉ</div>
+          <div id="statRevenue" class="value">-</div>
+          <div class="subtext">
+            Estimation basée sur des plages de RPM standard ($0.50 - $2.50). Les revenus réels varient.
+          </div>
         </div>
       </div>
+
     </div>
 
-  <div id="page-faq" class="page">
-      <section class="hero">
-        <span class="hero-tag">FAQ</span>
-        <h1 data-i18n="nav_faq">Frequently Asked Questions</h1>
-      </section>
-      <div style="max-width: 750px; margin: 0 auto;">
-        
-        <details>
-          <summary data-i18n="faq_q1">What is NerdStats?</summary>
-          <p data-i18n="faq_a1">NerdStats is a public YouTube analytics platform designed to help creators and analysts inspect public engagement metrics, side-by-side video performance, and transparent data insights.</p>
-        </details>
+    <button class="share-btn" onclick="navigator.clipboard.writeText(window.location.href); alert('Lien copié !');">
+      Partager l'Analyse
+    </button>
+  </div>
 
-        <details>
-          <summary data-i18n="faq_q2">Where does the data come from?</summary>
-          <p data-i18n="faq_a2">All data is retrieved live directly from the official YouTube Data API v3 provided by Google.</p>
-        </details>
-
-        <details>
-          <summary data-i18n="faq_q3">Is the revenue estimate accurate?</summary>
-          <p data-i18n="faq_a3">No public tool can access exact YouTube earnings. Our revenue range is an estimation based on public views and standard industry RPM ranges ($0.50 - $2.50).</p>
-        </details>
-
-        <details>
-          <summary data-i18n="faq_q4">What is NerdScore and how is it calculated?</summary>
-          <p data-i18n="faq_a4">NerdScore is a custom analytical index (0-100) combining public likes, comments ratio, and audience velocity signals.</p>
-        </details>
-
-        <details>
-          <summary data-i18n="faq_q5">Can NerdStats see private YouTube analytics or revenue?</summary>
-          <p data-i18n="faq_a5">No. NerdStats only accesses publicly available signals. We cannot read private Studio metrics, subscriber retention graphs, or exact RPM.</p>
-        </details>
-
-        <details>
-          <summary data-i18n="faq_q6">Can I analyze unlisted or private videos?</summary>
-          <p data-i18n="faq_a6">You can analyze unlisted videos if you have their URL, but strictly private videos cannot be accessed via the public API.</p>
-        </details>
-
-        <details>
-          <summary data-i18n="faq_q7">How is Public Engagement calculated?</summary>
-          <p data-i18n="faq_a7">Public Engagement is calculated as: (Public Likes + Public Comments) divided by Total Views, expressed as a percentage.</p>
-        </details>
-
-        <details>
-          <summary data-i18n="faq_q8">Does NerdStats store my searches?</summary>
-          <p data-i18n="faq_a8">No. Searches are processed client-side in real-time. We do not store or track your individual search history.</p>
-        </details>
-
-        <details>
-          <summary data-i18n="faq_q9">Which languages are supported?</summary>
-          <p data-i18n="faq_a9">NerdStats supports 7 languages: English, Français, Español, Português, Deutsch, 日本語, and 한국어.</p>
-        </details>
-
-        <details>
-          <summary data-i18n="faq_q10">What are the API usage limits?</summary>
-          <p data-i18n="faq_a10">Requests are governed by Google YouTube API daily quota limits. If a limit is hit, request processing may pause temporarily.</p>
-        </details>
-
-      </div>
-    </div>
-
-    <div id="page-support" class="page">
-      <section class="hero">
-        <span class="hero-tag">CONTACT</span>
-        <h1 data-i18n="support_title">Support & Feedback</h1>
-        <p data-i18n="support_sub" style="color:var(--text-muted); margin-bottom:30px;">Found a bug or have a suggestion? Send us a message directly.</p>
-      </section>
-
-      <form id="supportForm" onsubmit="return false;" style="max-width: 600px; margin: 0 auto; background:var(--bg-card); border:1px solid var(--border-card); padding:28px; border-radius:16px;">
-        <div class="form-group">
-          <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted);">TYPE</label>
-          <select id="supportType" class="custom-select">
-            <option value="Bug Report" data-i18n="support_type_bug">Bug Report</option>
-            <option value="Feature Request" data-i18n="support_type_feature">Feature Request</option>
-            <option value="Analysis Issue" data-i18n="support_type_issue">Analysis Issue</option>
-            <option value="Other" data-i18n="support_type_other">Other</option>
-          </select>
-        </div>
-
-        <div class="form-group" style="margin-top:16px;">
-          <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted);">MESSAGE</label>
-          <textarea id="supportMsg" placeholder="Describe your bug or suggestion..." required style="width:100%; min-height:120px; padding:12px; border-radius:8px; border:1px solid var(--border-card); background:var(--bg-main); color:var(--text-main); font-family:inherit;"></textarea>
-        </div>
-
-        <button type="submit" id="supportSubmitBtn" class="btn-action" style="width:100%; margin-top:20px;" data-i18n="support_send">Send Message</button>
-
-        <div id="supportStatus" class="hidden" style="margin-top:16px; text-align:center; font-weight:700; font-size:0.9rem;"></div>
-      </form>
-    </div>
-
-  </main>
-
-  <script src="js/i18n.js"></script>
-  <script src="js/youtube.js"></script>
+  <!-- Injection de la Clé API globale et des scripts JS -->
+  <script>
+    // Mets ta clé API YouTube fonctionnelle ici
+    window.YOUTUBE_API_KEY = "TA_CLE_API_YOUTUBE_ICI";
+  </script>
   <script src="js/app.js"></script>
 </body>
 </html>
