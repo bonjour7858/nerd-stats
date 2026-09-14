@@ -4,254 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NerdStats — Public YouTube Analytics</title>
-  <style>
-    :root {
-      --bg-color: #0f1117;
-      --card-bg: #161922;
-      --card-inner: #1e2230;
-      --text-main: #ffffff;
-      --text-sub: #8a8f9d;
-      --accent-color: #ff4500;
-      --green-color: #00e676;
-      --border-color: #2a2e3d;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-
-    header {
-      margin-bottom: 25px;
-      text-align: center;
-      width: 100%;
-      max-width: 750px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .brand h1 {
-      font-size: 1.8rem;
-    }
-
-    .brand p {
-      color: var(--text-sub);
-      font-size: 0.85rem;
-    }
-
-    /* Selecteur de langue */
-    .lang-select {
-      background: var(--card-bg);
-      color: var(--text-main);
-      border: 1px solid var(--border-color);
-      padding: 6px 10px;
-      border-radius: 6px;
-      outline: none;
-      cursor: pointer;
-    }
-
-    /* Barre de recherche */
-    .search-box {
-      display: flex;
-      gap: 10px;
-      width: 100%;
-      max-width: 750px;
-      margin-bottom: 30px;
-    }
-
-    .search-box input {
-      flex: 1;
-      padding: 12px 16px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      background-color: var(--card-bg);
-      color: #fff;
-      font-size: 1rem;
-      outline: none;
-    }
-
-    .search-box button {
-      padding: 12px 24px;
-      border-radius: 8px;
-      border: none;
-      background-color: var(--accent-color);
-      color: #fff;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .search-box button:hover {
-      opacity: 0.9;
-    }
-
-    /* Carte de résultats */
-    .analysis-card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 24px;
-      width: 100%;
-      max-width: 750px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-      margin-bottom: 40px;
-    }
-
-    .card-grid {
-      display: grid;
-      grid-template-columns: 280px 1fr;
-      gap: 20px;
-    }
-
-    @media (max-width: 650px) {
-      .card-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .thumb-container img {
-      width: 100%;
-      border-radius: 8px;
-      object-fit: cover;
-      aspect-ratio: 16/9;
-    }
-
-    .video-info h2 {
-      font-size: 1.1rem;
-      margin-bottom: 6px;
-      line-height: 1.3;
-    }
-
-    .video-info .channel {
-      color: var(--text-sub);
-      font-size: 0.85rem;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .stat-box {
-      background-color: var(--card-inner);
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-    }
-
-    .stat-box .label {
-      font-size: 0.75rem;
-      color: var(--text-sub);
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
-
-    .stat-box .value {
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
-
-    .full-width {
-      grid-column: 1 / -1;
-    }
-
-    .revenue-box .value {
-      color: var(--green-color);
-    }
-
-    .revenue-box .subtext {
-      font-size: 0.75rem;
-      color: var(--text-sub);
-      margin-top: 4px;
-    }
-
-    .score-box {
-      border: 1px solid var(--accent-color);
-      text-align: center;
-      padding: 16px;
-      margin-top: 15px;
-    }
-
-    .score-box .score-val {
-      font-size: 2rem;
-      font-weight: bold;
-    }
-
-    .share-btn {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background-color: var(--card-inner);
-      border: 1px solid var(--border-color);
-      color: #fff;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    /* Section Support */
-    .support-section {
-      width: 100%;
-      max-width: 750px;
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 24px;
-    }
-
-    .support-section h3 {
-      margin-bottom: 12px;
-    }
-
-    .support-form {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .support-form select, 
-    .support-form textarea {
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid var(--border-color);
-      background: var(--card-inner);
-      color: #fff;
-      outline: none;
-    }
-
-    .support-form textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-
-    .support-form button {
-      align-self: flex-start;
-      padding: 10px 20px;
-      background-color: var(--card-inner);
-      border: 1px solid var(--border-color);
-      color: #fff;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-  </style>
+  
+  <!-- Tes fichiers CSS d'origine -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
 </head>
 <body>
 
   <header>
     <div class="brand">
       <h1>NerdStats Studio</h1>
-      <p>Public YouTube Analytics</p>
+      <p data-i18n="subtitle">Public YouTube Analytics</p>
     </div>
     <select id="langSelect" class="lang-select">
       <option value="fr">FR</option>
@@ -266,14 +29,13 @@
 
   <!-- Formulaire de recherche -->
   <form id="searchForm" class="search-box">
-    <input type="text" id="searchInput" placeholder="Colle le lien d'une vidéo YouTube..." required>
-    <button type="submit" id="searchBtn">Analyser</button>
+    <input type="text" id="searchInput" placeholder="Colle le lien d'une vidéo YouTube..." data-i18n-ph="inputPlaceholder" required>
+    <button type="submit" id="searchBtn" data-i18n="analyzeBtn">Analyser</button>
   </form>
 
-  <!-- Carte d'analyse (Cachée au démarrage) -->
+  <!-- Carte d'analyse (Cachée par défaut au chargement) -->
   <div id="resultsCard" class="analysis-card" style="display: none;">
     <div class="card-grid">
-      
       <div>
         <div class="thumb-container">
           <img id="videoThumbnail" src="" alt="Miniature">
@@ -284,9 +46,9 @@
         </div>
 
         <div class="stat-box score-box">
-          <div class="label">NERDSCORE</div>
+          <div class="label" data-i18n="lblScore">NERDSCORE</div>
           <div id="nerdScoreValue" class="score-val">- / 100</div>
-          <div style="font-size: 0.75rem; color: var(--text-sub); margin-top: 4px;">
+          <div style="font-size: 0.75rem; color: var(--text-sub); margin-top: 4px;" data-i18n="scoreSub">
             Signaux d'engagement publics.
           </div>
         </div>
@@ -294,57 +56,75 @@
 
       <div class="stats-grid">
         <div class="stat-box">
-          <div class="label">VUES</div>
+          <div class="label" data-i18n="lblViews">VUES</div>
           <div id="statViews" class="value">-</div>
         </div>
 
         <div class="stat-box">
-          <div class="label">LIKES</div>
+          <div class="label" data-i18n="lblLikes">LIKES</div>
           <div id="statLikes" class="value">-</div>
         </div>
 
         <div class="stat-box">
-          <div class="label">ENGAGEMENT</div>
+          <div class="label" data-i18n="lblEngagement">ENGAGEMENT</div>
           <div id="statEngagement" class="value">-</div>
         </div>
 
         <div class="stat-box">
-          <div class="label">COMMENTAIRES</div>
+          <div class="label" data-i18n="lblComments">COMMENTAIRES</div>
           <div id="statComments" class="value">-</div>
         </div>
 
         <div class="stat-box full-width revenue-box">
-          <div class="label">REVENU ESTIMÉ</div>
+          <div class="label" data-i18n="lblRevenue">REVENU ESTIMÉ</div>
           <div id="statRevenue" class="value">-</div>
-          <div class="subtext">
+          <div class="subtext" data-i18n="revenueSub">
             Estimation RPM standard ($0.50 - $2.50).
           </div>
         </div>
       </div>
-
     </div>
 
-    <button id="shareBtn" class="share-btn" type="button">Partager l'Analyse</button>
+    <button id="shareBtn" class="share-btn" type="button" data-i18n="shareBtn">Partager l'Analyse</button>
   </div>
 
-  <!-- Section Support -->
-  <div class="support-section">
-    <h3>Support / Feedback</h3>
+  <!-- FAQ -->
+  <div class="section-container">
+    <h3 data-i18n="faqTitle">Foire Aux Questions</h3>
+    
+    <div class="faq-item">
+      <div class="faq-question" data-i18n="faqQ1">Comment est calculé le NerdScore ?</div>
+      <div class="faq-answer" data-i18n="faqA1">Le NerdScore analyse le ratio d'engagement (likes, commentaires) par rapport au nombre de vues sur une échelle de 0 à 100.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" data-i18n="faqQ2">D'où viennent les estimations de revenus ?</div>
+      <div class="faq-answer" data-i18n="faqA2">Elles sont calculées à partir de tranches de RPM standardisées ($0.50 à $2.50 pour 1000 vues).</div>
+    </div>
+  </div>
+
+  <!-- Support / Feedback -->
+  <div class="section-container">
+    <h3 data-i18n="supportTitle">Support / Feedback</h3>
     <form id="supportForm" class="support-form">
       <select id="ticketType">
-        <option value="Bug Report">Rapporter un bug</option>
-        <option value="Feature Request">Proposer une fonctionnalité</option>
-        <option value="Question">Question générale</option>
+        <option value="Bug Report" data-i18n="optBug">Rapporter un bug</option>
+        <option value="Feature Request" data-i18n="optFeature">Proposer une fonctionnalité</option>
+        <option value="Question" data-i18n="optQuestion">Question générale</option>
       </select>
-      <textarea id="ticketMessage" placeholder="Explique ton problème ou ton idée..." required></textarea>
-      <button type="submit">Envoyer</button>
+      <textarea id="ticketMessage" placeholder="Explique ton problème ou ton idée..." data-i18n-ph="supportPlaceholder" required></textarea>
+      <button type="submit" data-i18n="sendBtn">Envoyer</button>
     </form>
   </div>
 
-  <!-- Configuration de la clé API -->
+  <!-- Tes scripts JS chargés dans l'ordre de ton dossier /js -->
   <script>
     window.YOUTUBE_API_KEY = "AIzaSyA96HZN4c_q9kfoKXIlVg5Hpl7uDo1Hihw";
   </script>
+  <script src="js/i18n.js"></script>
+  <script src="js/youtube.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
+
+
