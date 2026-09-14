@@ -34,25 +34,41 @@
     }
 
     header {
-      margin-bottom: 30px;
+      margin-bottom: 25px;
       text-align: center;
+      width: 100%;
+      max-width: 750px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    h1 {
-      font-size: 2.2rem;
-      margin-bottom: 8px;
+    .brand h1 {
+      font-size: 1.8rem;
     }
 
-    p.subtitle {
+    .brand p {
       color: var(--text-sub);
-      font-size: 0.95rem;
+      font-size: 0.85rem;
     }
 
+    /* Selecteur de langue */
+    .lang-select {
+      background: var(--card-bg);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 6px 10px;
+      border-radius: 6px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* Barre de recherche */
     .search-box {
       display: flex;
       gap: 10px;
       width: 100%;
-      max-width: 650px;
+      max-width: 750px;
       margin-bottom: 30px;
     }
 
@@ -75,11 +91,10 @@
       color: #fff;
       font-weight: bold;
       cursor: pointer;
-      transition: background 0.2s;
     }
 
     .search-box button:hover {
-      background-color: #e03d00;
+      opacity: 0.9;
     }
 
     /* Carte de résultats */
@@ -91,6 +106,7 @@
       width: 100%;
       max-width: 750px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      margin-bottom: 40px;
     }
 
     .card-grid {
@@ -113,7 +129,7 @@
     }
 
     .video-info h2 {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       margin-bottom: 6px;
       line-height: 1.3;
     }
@@ -121,7 +137,6 @@
     .video-info .channel {
       color: var(--text-sub);
       font-size: 0.85rem;
-      margin-bottom: 16px;
     }
 
     .stats-grid {
@@ -141,7 +156,6 @@
       font-size: 0.75rem;
       color: var(--text-sub);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
       margin-bottom: 4px;
     }
 
@@ -168,12 +182,12 @@
       border: 1px solid var(--accent-color);
       text-align: center;
       padding: 16px;
+      margin-top: 15px;
     }
 
     .score-box .score-val {
       font-size: 2rem;
       font-weight: bold;
-      color: #fff;
     }
 
     .share-btn {
@@ -186,49 +200,98 @@
       cursor: pointer;
     }
 
-    .share-btn:hover {
-      background-color: var(--border-color);
+    /* Section Support */
+    .support-section {
+      width: 100%;
+      max-width: 750px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .support-section h3 {
+      margin-bottom: 12px;
+    }
+
+    .support-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .support-form select, 
+    .support-form textarea {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: var(--card-inner);
+      color: #fff;
+      outline: none;
+    }
+
+    .support-form textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .support-form button {
+      align-self: flex-start;
+      padding: 10px 20px;
+      background-color: var(--card-inner);
+      border: 1px solid var(--border-color);
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>NerdStats Studio</h1>
-    <p class="subtitle">Analyse publique et métriques YouTube en temps réel</p>
+    <div class="brand">
+      <h1>NerdStats Studio</h1>
+      <p>Public YouTube Analytics</p>
+    </div>
+    <select id="langSelect" class="lang-select">
+      <option value="fr">FR</option>
+      <option value="en">EN</option>
+      <option value="de">DE</option>
+      <option value="es">ES</option>
+      <option value="pt">PT</option>
+      <option value="ja">JA</option>
+      <option value="ko">KO</option>
+    </select>
   </header>
 
-  <!-- Barre de recherche -->
-  <div class="search-box">
-    <input type="text" id="searchInput" placeholder="Colle le lien d'une vidéo YouTube ici...">
-    <button id="searchBtn">Analyser</button>
-  </div>
+  <!-- Formulaire de recherche -->
+  <form id="searchForm" class="search-box">
+    <input type="text" id="searchInput" placeholder="Colle le lien d'une vidéo YouTube..." required>
+    <button type="submit" id="searchBtn">Analyser</button>
+  </form>
 
-  <!-- Carte d'analyse (Masquée par défaut grâce à style="display: none;") -->
+  <!-- Carte d'analyse (Cachée au démarrage) -->
   <div id="resultsCard" class="analysis-card" style="display: none;">
     <div class="card-grid">
       
-      <!-- Colonne Gauche : Miniature, Titre, Score -->
       <div>
         <div class="thumb-container">
-          <img id="videoThumbnail" src="" alt="Miniature Vidéo">
+          <img id="videoThumbnail" src="" alt="Miniature">
         </div>
-
         <div class="video-info" style="margin-top: 15px;">
           <h2 id="videoTitle">-</h2>
           <div id="channelTitle" class="channel">-</div>
         </div>
 
-        <div class="stat-box score-box" style="margin-top: 15px;">
+        <div class="stat-box score-box">
           <div class="label">NERDSCORE</div>
           <div id="nerdScoreValue" class="score-val">- / 100</div>
           <div style="font-size: 0.75rem; color: var(--text-sub); margin-top: 4px;">
-            Basé sur les signaux d'engagement publics.
+            Signaux d'engagement publics.
           </div>
         </div>
       </div>
 
-      <!-- Colonne Droite : Métriques clés -->
       <div class="stats-grid">
         <div class="stat-box">
           <div class="label">VUES</div>
@@ -241,7 +304,7 @@
         </div>
 
         <div class="stat-box">
-          <div class="label">ENGAGEMENT PUBLIC</div>
+          <div class="label">ENGAGEMENT</div>
           <div id="statEngagement" class="value">-</div>
         </div>
 
@@ -254,21 +317,32 @@
           <div class="label">REVENU ESTIMÉ</div>
           <div id="statRevenue" class="value">-</div>
           <div class="subtext">
-            Estimation basée sur des plages de RPM standard ($0.50 - $2.50). Les revenus réels varient.
+            Estimation RPM standard ($0.50 - $2.50).
           </div>
         </div>
       </div>
 
     </div>
 
-    <button class="share-btn" onclick="navigator.clipboard.writeText(window.location.href); alert('Lien copié !');">
-      Partager l'Analyse
-    </button>
+    <button id="shareBtn" class="share-btn" type="button">Partager l'Analyse</button>
   </div>
 
-  <!-- Injection de la Clé API globale et des scripts JS -->
+  <!-- Section Support -->
+  <div class="support-section">
+    <h3>Support / Feedback</h3>
+    <form id="supportForm" class="support-form">
+      <select id="ticketType">
+        <option value="Bug Report">Rapporter un bug</option>
+        <option value="Feature Request">Proposer une fonctionnalité</option>
+        <option value="Question">Question générale</option>
+      </select>
+      <textarea id="ticketMessage" placeholder="Explique ton problème ou ton idée..." required></textarea>
+      <button type="submit">Envoyer</button>
+    </form>
+  </div>
+
+  <!-- Configuration de la clé API -->
   <script>
-    // Mets ta clé API YouTube fonctionnelle ici
     window.YOUTUBE_API_KEY = "AIzaSyA96HZN4c_q9kfoKXIlVg5Hpl7uDo1Hihw";
   </script>
   <script src="js/app.js"></script>
